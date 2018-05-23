@@ -7,7 +7,6 @@ import Modal from "react-native-modal";
 // TODO: apply styling
 // TODO: highlight collected caps in sheets
 // TODO: fix toggle sheet
-// TODO: build addCap UI
 
 
 export default class App extends React.Component {
@@ -17,7 +16,7 @@ export default class App extends React.Component {
             collection: [1, 1, 2, 2, 2, 1, 5],
             text: 'placeholder',
             input: '',
-            activeSheets: [true, true, false, false, false],
+            activeSheets: [true, false, false, false, false],
             isModalVisible: false,
             sheets: [
                 [
@@ -64,7 +63,6 @@ export default class App extends React.Component {
             <View style={styles.container}>
                 <ScrollView>
                     <Text>Sternburg Bingo</Text>
-                    <Text>Bier?</Text>
                     <ScrollView horizontal={true}>
                         {this.renderSheets(this.state.sheets)}
                     </ScrollView>
@@ -90,6 +88,8 @@ export default class App extends React.Component {
     addCap = () => {
         // Fetch input, close modal, split string of caps, add to collection, empty input field
         const input = this.state.input;
+        const sheets = this.state.sheets;
+        const newSheets = sheets;
         this.toggleModal();
 
         const newCaps = input.split(',');
@@ -100,19 +100,25 @@ export default class App extends React.Component {
         });
         this.setState({collection, input: ''});
 
-        // TODO set values in sheets, check for bingo
-        /*checkSheets.map((sheet, index) => {
-            if (this.state.activeSheets[sheet] === true) {
-                sheet.map(row => {
-                    row.map(cell => {
-                        if (cell[0] === input) {
-                            cell[1] = true;
-                            this.bingoChecker(index);
-                        }
+        // set values in sheets, check for bingo
+        newCaps.map(cap => {
+            sheets.map((sheet, sheetIndex) => {
+                if (this.state.activeSheets[sheetIndex] === true) {
+                    sheet.map((row, rowIndex) => {
+                        row.map((cell, cellIndex) => {
+                            cap = parseInt(cap);
+                            if (cell[0] === cap) {
+                                newSheets[sheetIndex][rowIndex][cellIndex][1] = true;
+                                this.setState({sheets: newSheets});
+                                this.bingoChecker(sheetIndex);
+                            }
+                        });
                     });
-                });
-            }
-        });*/
+                }
+            });
+        });
+
+        // console.log(this.state.sheets[0]);
     };
 
     bingoChecker = sheetIndex => {
@@ -157,7 +163,7 @@ export default class App extends React.Component {
 
         // check diagonally up (top-right to bottom-left)
         for (let x = 0; x < 5; x++) {
-            if (sheet[x][4 - x]) {
+            if (sheet[4 - x][x][1] === false) {
                 break;
             } else if (x === 4) {
                 this.bingo('diagUp', x, sheetIndex);
@@ -167,6 +173,7 @@ export default class App extends React.Component {
     };
 
     bingo = (dir, location, sheet) => {
+        console.log('bingo!', dir, location);
         let collection = this.state.collection;
         if (dir === 'horizontal') {
             for (let y = 0; y < 5; y++) {
@@ -195,8 +202,8 @@ export default class App extends React.Component {
     // get number from sheet, remove it from collection, check if still in collection, set flag in sheet
     removeCap = (x, y, sheet, collection) => {
         const sheets = this.state.sheets;
-        collection.splice(collection.findIndex(sheets[sheet][x][y][0]), 1);
-        if (collection.findIndex(sheets[sheet][x][y][0]) === -1) {
+        collection.splice(collection.lastIndexOf(sheets[sheet][x][y][0]), 1);
+        if (collection.lastIndexOf(sheets[sheet][x][y][0]) === -1) {
             sheets[sheet][x][y][1] = false;
             this.setState({sheets});
         }
