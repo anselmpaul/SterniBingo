@@ -6,8 +6,8 @@ import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-ta
 class BingoSheet extends React.Component {
 
     static propTypes = {
-        numbers: PropTypes.array.required,
-        active: PropTypes.bool.required
+        numbers: PropTypes.array,
+        active: PropTypes.bool
     };
 
     constructor(props) {
