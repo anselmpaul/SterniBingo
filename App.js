@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableHighlight, ScrollView, Button } from 'react-native';
 import BingoSheet from './components/BingoSheet';
-import PopupDialog, { DialogTitle } from 'react-native-popup-dialog';
+import Modal from "react-native-modal";
 
 // TODO: save app state persistent
 // TODO: apply styling
@@ -16,8 +16,9 @@ export default class App extends React.Component {
         this.state = {
             collection: [1, 1, 2, 2, 2, 1, 5],
             text: 'placeholder',
-            input: '0',
+            input: '',
             activeSheets: [true, true, false, false, false],
+            isModalVisible: false,
             sheets: [
                 [
                     [[15, false], [28, false], [67, false], [43, false], [10, false]],
@@ -70,27 +71,36 @@ export default class App extends React.Component {
                     <Text>Deine Kronkorken:</Text>
                     {this.renderCollection(this.state.collection)}
                 </ScrollView>
-                <PopupDialog
-                    dialogTitle={<DialogTitle title="Dialog Title" />}
-                    ref={(popupDialog) => { this.popupDialog = popupDialog; }}
-                >
-                    <View>
-                        <Text>Hello</Text>
+                <Modal isVisible={this.state.isModalVisible} onBackdropPress={this.toggleModal} onBackButtonPress={this.toggleModal}>
+                    <View style={styles.modal}>
+                        <Text>Einen oder mehrere Kronkorken hinzufügen</Text>
+                        {this.state.isModalVisible ? <TextInput keyboardType="numeric" autoFocus value={this.state.input} onChangeText={input => this.setState({input})} onSubmitEditing={this.addCap}/> : null }
                     </View>
-                </PopupDialog>
-                /*<Button title="Neuer Kronkorken" onPress={() => {
-                    this.popupDialog.show();}} />*/
+                </Modal>
+                <Button title="Neuer Kronkorken" onPress={this.toggleModal} />
             </View>
         );
     }
 
-    addCap = input => {
-        // TODO: add to collection
-        const collection = this.state.collection;
-        collection.push(input);
-        this.setState({collection});
+    toggleModal = () => {
+        this.setState({ isModalVisible: !this.state.isModalVisible });
+    };
 
-        // TODO what is this?
+
+    addCap = () => {
+        // Fetch input, close modal, split string of caps, add to collection, empty input field
+        const input = this.state.input;
+        this.toggleModal();
+
+        const newCaps = input.split(',');
+        const collection = this.state.collection;
+        newCaps.map(cap => {
+            cap = parseInt(cap);
+            collection.push(cap);
+        });
+        this.setState({collection, input: ''});
+
+        // TODO set values in sheets, check for bingo
         /*checkSheets.map((sheet, index) => {
             if (this.state.activeSheets[sheet] === true) {
                 sheet.map(row => {
@@ -210,7 +220,7 @@ export default class App extends React.Component {
         const activeSheets = this.state.activeSheets;
         const collection = this.state.collection;
         const sheets = this.state.sheets;
-        console.log('tap tap tap');
+        // console.log('tap tap tap');
 
         //console.log('activeSheets:', activeSheets, 'collection:', collection, 'sheets:', sheets);
 
@@ -251,5 +261,6 @@ const styles = StyleSheet.create({
   },
     touchable: {
       backgroundColor: 'red'
-    }
+    },
+    modal: { flex: 1, backgroundColor: '#fff'}
 });
