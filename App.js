@@ -11,7 +11,7 @@ export default class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            collection: [1],
+            collection: [1, 1, 2, 2, 2, 1, 5],
             text: 'placeholder',
             input: '0',
             activeSheets: [true, false, false, false, false]
@@ -30,7 +30,7 @@ export default class App extends React.Component {
                   onChange = {onChanged}
                   value = {this.state.input}
               />
-              {renderSheets()}
+              {/*renderSheets()*/}
               <Text>Your Collection</Text>
               {renderCollection(this.state.collection)}
           </View>
@@ -183,9 +183,15 @@ const removeCap = (x, y, sheet, collection) => {
 };
 
 const renderCollection = collection => {
-    return collection.map((cap, index) => {
-        console.log(cap);
-        return <Text key={'cap-' + index}>{cap}</Text>;
+    const countedCollection = [];
+    collection.map(cap => {
+        countedCollection[cap] = countedCollection[cap] ? countedCollection[cap] + 1 : 1;
+    });
+
+    return countedCollection.map((capCount, index) => {
+        if (capCount !== undefined) {
+            return <Text key={'cap-' + index}>{index} {capCount > 1 ? '(' + capCount + 'x)' : null}</Text>;
+        }
     });
 };
 
