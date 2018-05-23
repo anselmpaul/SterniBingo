@@ -1,10 +1,13 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableHighlight, ScrollView, Button } from 'react-native';
 import BingoSheet from './components/BingoSheet';
+import PopupDialog, { DialogTitle } from 'react-native-popup-dialog';
 
-// TODO: fix state thing
 // TODO: save app state persistent
 // TODO: apply styling
+// TODO: highlight collected caps in sheets
+// TODO: fix toggle sheet
+// TODO: build addCap UI
 
 
 export default class App extends React.Component {
@@ -14,7 +17,7 @@ export default class App extends React.Component {
             collection: [1, 1, 2, 2, 2, 1, 5],
             text: 'placeholder',
             input: '0',
-            activeSheets: [true, false, false, false, false],
+            activeSheets: [true, true, false, false, false],
             sheets: [
                 [
                     [[15, false], [28, false], [67, false], [43, false], [10, false]],
@@ -58,18 +61,25 @@ export default class App extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-                <Text>Sternburg Bingo</Text>
-                <Text>Bier?</Text>
-                <TextInput
-                    style={styles.textInput}
-                    keyboardType='numeric'
-                    onChangeText={(text) => this.addCap(text)}
-                    // onChange = {onChanged}
-                    value={this.state.input}
-                />
-                {this.renderSheets(this.state.sheets)}
-                <Text>Deine Kronkorken:</Text>
-                {this.renderCollection(this.state.collection)}
+                <ScrollView>
+                    <Text>Sternburg Bingo</Text>
+                    <Text>Bier?</Text>
+                    <ScrollView horizontal={true}>
+                        {this.renderSheets(this.state.sheets)}
+                    </ScrollView>
+                    <Text>Deine Kronkorken:</Text>
+                    {this.renderCollection(this.state.collection)}
+                </ScrollView>
+                <PopupDialog
+                    dialogTitle={<DialogTitle title="Dialog Title" />}
+                    ref={(popupDialog) => { this.popupDialog = popupDialog; }}
+                >
+                    <View>
+                        <Text>Hello</Text>
+                    </View>
+                </PopupDialog>
+                /*<Button title="Neuer Kronkorken" onPress={() => {
+                    this.popupDialog.show();}} />*/
             </View>
         );
     }
@@ -197,14 +207,14 @@ export default class App extends React.Component {
     };
 
     toggleSheet = sheetIndex => {
-        //const {activeSheets, collection, sheets} = this.state;
         const activeSheets = this.state.activeSheets;
         const collection = this.state.collection;
         const sheets = this.state.sheets;
+        console.log('tap tap tap');
 
         //console.log('activeSheets:', activeSheets, 'collection:', collection, 'sheets:', sheets);
 
-
+        /*
         activeSheets[sheetIndex] = !activeSheets[sheetIndex];
         if (activeSheets[sheetIndex]) {
             sheets[sheetIndex].map(row => {
@@ -213,18 +223,18 @@ export default class App extends React.Component {
                     console.log('cell:', cell);
                     /*if (collection.find(cell[0]) === undefined) {
                         sheets[sheetIndex][row][cell][1] = true;
-                    }*/
+                    }
                 })
             });
             this.bingoChecker(sheetIndex);
         }
-        this.setState({activeSheets, sheets});
+        this.setState({activeSheets, sheets});*/
     };
 
     renderSheets = sheets => {
         return sheets.map((sheet, index) => {
             const activeSheets = this.state.activeSheets;
-            return <TouchableHighlight key={'touchable-sheet-' + index} onPress={this.toggleSheet(index)}><BingoSheet key={'sheet-' + index}
+            return <TouchableHighlight style={styles.touchable} key={'touchable-sheet-' + index} onLongPress={this.toggleSheet(index)}><BingoSheet key={'sheet-' + index}
                                                                                     numbers={sheet}
                                                                                     active={activeSheets[index]}/></TouchableHighlight>
         });
@@ -239,4 +249,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+    touchable: {
+      backgroundColor: 'red'
+    }
 });
