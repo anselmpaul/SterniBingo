@@ -16,7 +16,7 @@ export default class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            collection: [1, 1, 2, 2, 2, 1, 5],
+            collection: [1, 1, 2, 2, 2, 1, 5, 15, 32, 91, 87],
             text: 'placeholder',
             input: '',
             activeSheets: [true, false, false, false, false],
@@ -61,6 +61,14 @@ export default class App extends React.Component {
         };
     }
 
+    componentDidMount() {
+        this.state.activeSheets.map(sheet => {
+            if (sheet === true) {
+                this.checkCapInSheet(this.state.collection);
+            }
+        });
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -95,8 +103,6 @@ export default class App extends React.Component {
     addCap = () => {
         // Fetch input, close modal, split string of caps, add to collection, empty input field
         const input = this.state.input;
-        const sheets = this.state.sheets;
-        const newSheets = sheets;
         this.toggleModal();
 
         const newCaps = input.split(',');
@@ -108,7 +114,15 @@ export default class App extends React.Component {
         this.setState({collection, input: ''});
 
         // set values in sheets, check for bingo
-        newCaps.map(cap => {
+        this.checkCapInSheet(newCaps);
+
+        // console.log(this.state.sheets[0]);
+    };
+
+    checkCapInSheet = caps => {
+        const sheets = this.state.sheets;
+        const newSheets= sheets;
+        caps.map(cap => {
             sheets.map((sheet, sheetIndex) => {
                 if (this.state.activeSheets[sheetIndex] === true) {
                     sheet.map((row, rowIndex) => {
@@ -124,8 +138,6 @@ export default class App extends React.Component {
                 }
             });
         });
-
-        // console.log(this.state.sheets[0]);
     };
 
     bingoChecker = sheetIndex => {
@@ -234,7 +246,7 @@ export default class App extends React.Component {
         const activeSheets = this.state.activeSheets;
         const collection = this.state.collection;
         const sheets = this.state.sheets;
-        // console.log('tap tap tap');
+        console.log('tap tap tap');
 
         //console.log('activeSheets:', activeSheets, 'collection:', collection, 'sheets:', sheets);
 
