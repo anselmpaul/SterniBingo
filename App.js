@@ -77,7 +77,7 @@ export default class App extends React.Component {
                         <Text>Einen oder mehrere Kronkorken hinzufügen</Text>
                         {this.state.isModalVisible ? <TextInput keyboardType="numeric" autoFocus value={this.state.input} onChangeText={input => this.setState({input})} onSubmitEditing={this.addCap}/> : null }
                     </View>
-                </Modal>
+                  </Modal>
                 <TouchableOpacity style={styles.button} onPress={this.toggleModal}>
                     <Text style={styles.buttonText}>
                         NEUER KRONKORKEN

@@ -16,10 +16,22 @@ class BingoSheet extends React.Component {
     }
 
     render() {
+        const test = ['text', true];
         return (
             <View style={this.props.active ? styles.sheetContainerActive : styles.sheetContainerInactive}>
-                <Table borderStyle={ styles.tableBorder }>
-                    <Rows data={this.props.numbers}  textStyle={styles.textDark}/>
+                <Table borderStyle={ styles.tableBorder } style={ styles.table }>
+                    {
+                        this.props.numbers.map((rowData, index) => (
+
+                            <TableWrapper key={index} style={styles.row}>
+                                {
+                                    rowData.map((cellData, cellIndex) => (
+                                        <Cell key={cellIndex} data={cellData[0]} style={cellData[1] ? styles.checkedCell : styles.cell} textStyle={styles.tableText}/>
+                                    ))
+                                }
+                            </TableWrapper>
+                        ))
+                    }
                 </Table>
                 {this.props.active?
                     <Text style={styles.inactiveNote}>zum Deaktivieren Karte gedrückt halten</Text>:
