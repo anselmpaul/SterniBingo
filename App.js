@@ -87,18 +87,22 @@ export default class App extends React.Component {
                     onShow={this.state.isModalFeedback ? null : () => { this.textInput.focus(); }}
                 >
                     <View style={styles.modal}>
-
-                        <Text>Einen oder mehrere Kronkorken hinzufügen</Text>
-                        <TextInput
-                            keyboardType="numeric"
-                            value={this.state.input}
-                            onChangeText={input => this.setState({input})}
-                            onSubmitEditing={this.addCap}
-                            ref={(ref) => this.textInput = ref }
-                        />
+                        {this.state.isModalFeedback ?
+                                <Text>Bingo!</Text>
+                            :
+                            <View>
+                                <Text>Einen oder mehrere Kronkorken hinzufügen</Text>
+                                <TextInput
+                                    keyboardType="numeric"
+                                    value={this.state.input}
+                                    onChangeText={input => this.setState({input})}
+                                    onSubmitEditing={this.addCap}
+                                    ref={(ref) => this.textInput = ref }
+                                />
+                            </View>}
                     </View>
                 </Modal>
-                <TouchableOpacity style={styles.button} onPress={this.toggleModal}>
+                <TouchableOpacity style={styles.button} onPress={() => {this.setState({isModalFeedback: false}, this.toggleModal)}}>
                     <Text style={styles.buttonText}>
                         NEUER KRONKORKEN
                     </Text>
@@ -108,7 +112,11 @@ export default class App extends React.Component {
     }
 
     toggleModal = () => {
-        this.setState({ isModalVisible: !this.state.isModalVisible });
+        this.setState({ isModalVisible: !this.state.isModalVisible }, function() {
+                console.log('toggle!');
+                console.log('modal is visible', this.state.isModalVisible);
+            });
+
     };
 
 
@@ -206,6 +214,16 @@ export default class App extends React.Component {
 
     bingo = (dir, location, sheet) => {
         console.log('bingo!', dir, location);
+        // show bingo Feedback
+        const self = this;
+        this.setState({isModalFeedback: true}, function() {
+            console.log('will there be feedback?', this.state.isModalFeedback);
+            self.toggleModal();
+        });
+        setTimeout(function () {
+                self.toggleModal();
+            }, 5000
+        );
 
         // remove caps from bingo from collection and sheet
         let collection = this.state.collection;
