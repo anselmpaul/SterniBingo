@@ -8,8 +8,6 @@ import styles, { colors } from './app.style';
 // TODO: apply general sternbung CI styling
 // TODO: implement snap carousel for sheets
 // TODO: implement Feedback "Nice!" "Meh" "Bingo!"
-// TODO: highlight collected caps in sheets
-// TODO: fix toggle sheet
 
 
 export default class App extends React.Component {
@@ -246,33 +244,27 @@ export default class App extends React.Component {
         const activeSheets = this.state.activeSheets;
         const collection = this.state.collection;
         const sheets = this.state.sheets;
-        console.log('tap tap tap');
 
-        //console.log('activeSheets:', activeSheets, 'collection:', collection, 'sheets:', sheets);
-
-        /*
         activeSheets[sheetIndex] = !activeSheets[sheetIndex];
-        if (activeSheets[sheetIndex]) {
-            sheets[sheetIndex].map(row => {
 
-                row.map(cell => {
-                    console.log('cell:', cell);
-                    /*if (collection.find(cell[0]) === undefined) {
-                        sheets[sheetIndex][row][cell][1] = true;
-                    }
-                })
+        if (activeSheets[sheetIndex]) {
+            this.checkCapInSheet(collection);
+        } else {
+            sheets[sheetIndex].map((row, rowIndex) => {
+                row.map((cell, cellIndex) => {
+                    sheets[sheetIndex][rowIndex][cellIndex][1] = false;
+                });
             });
-            this.bingoChecker(sheetIndex);
         }
-        this.setState({activeSheets, sheets});*/
+        this.setState({activeSheets, sheets});
     };
 
     renderSheets = sheets => {
         return sheets.map((sheet, index) => {
             const activeSheets = this.state.activeSheets;
-            return <TouchableHighlight style={styles.touchable} key={'touchable-sheet-' + index} onLongPress={this.toggleSheet(index)}><BingoSheet key={'sheet-' + index}
-                                                                                    numbers={sheet}
-                                                                                    active={activeSheets[index]}/></TouchableHighlight>
+            return <TouchableHighlight style={styles.touchable} key={'touchable-sheet-' + index} onLongPress={() => this.toggleSheet(index)}>
+                        <BingoSheet key={'sheet-' + index} numbers={sheet} active={activeSheets[index]}/>
+            </TouchableHighlight>;
         });
     };
 
