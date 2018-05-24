@@ -1,8 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableHighlight, TouchableOpacity, ScrollView, Button } from 'react-native';
+import { Text, View, TextInput, TouchableHighlight, TouchableOpacity, ScrollView} from 'react-native';
 import BingoSheet from './components/BingoSheet';
 import Modal from "react-native-modal";
-import styles, { colors } from './app.style';
+import styles from './app.style';
 
 // TODO: save app state persistent
 // TODO: apply general sternbung CI styling
@@ -16,7 +16,7 @@ export default class App extends React.Component {
         this.state = {
             collection: [1, 1, 2, 2, 2, 1, 5, 15, 32, 91, 87],
             text: 'placeholder',
-            input: '',
+            input: null,
             activeSheets: [true, false, false, false, false],
             isModalVisible: false,
             isModalFeedback: false,
@@ -77,8 +77,10 @@ export default class App extends React.Component {
                     <ScrollView horizontal={true}>
                         {this.renderSheets(this.state.sheets)}
                     </ScrollView>
-                    <Text style={styles.text}>Deine Kronkorken:</Text>
-                    {this.renderCollection(this.state.collection)}
+                    <Text style={styles.smallHeadline}>gesammelte Kronkorken:</Text>
+                    <View style={styles.collection}>
+                        {this.renderCollection(this.state.collection)}
+                    </View>
                 </ScrollView>
                 <Modal
                     isVisible={this.state.isModalVisible}
@@ -86,17 +88,18 @@ export default class App extends React.Component {
                     onBackButtonPress={this.toggleModal}
                     onShow={this.state.isModalFeedback ? null : () => { this.textInput.focus(); }}
                 >
-                    <View style={styles.modal}>
+                    <View style={this.state.isModalFeedback ? styles.feedbackModal : styles.modal}>
                         {this.state.isModalFeedback ?
-                                <Text>Bingo!</Text>
+                                <Text style={styles.bingoText}>BINGO!</Text>
                             :
                             <View>
-                                <Text>Einen oder mehrere Kronkorken hinzufügen</Text>
+                                <Text style={styles.modalHeadline}>Einen oder mehrere Kronkorken hinzufügen</Text>
                                 <TextInput
                                     keyboardType="numeric"
                                     value={this.state.input}
                                     onChangeText={input => this.setState({input})}
                                     onSubmitEditing={this.addCap}
+                                    style={styles.input}
                                     ref={(ref) => this.textInput = ref }
                                 />
                             </View>}
@@ -112,11 +115,7 @@ export default class App extends React.Component {
     }
 
     toggleModal = () => {
-        this.setState({ isModalVisible: !this.state.isModalVisible }, function() {
-                console.log('toggle!');
-                console.log('modal is visible', this.state.isModalVisible);
-            });
-
+        this.setState({ isModalVisible: !this.state.isModalVisible });
     };
 
 
@@ -217,7 +216,6 @@ export default class App extends React.Component {
         // show bingo Feedback
         const self = this;
         this.setState({isModalFeedback: true}, function() {
-            console.log('will there be feedback?', this.state.isModalFeedback);
             self.toggleModal();
         });
         setTimeout(function () {
@@ -273,7 +271,7 @@ export default class App extends React.Component {
 
         return countedCollection.map((capCount, index) => {
             if (capCount !== undefined) {
-                return <Text style={styles.text} key={'cap-' + index}>{index} {capCount > 1 ? '(' + capCount + 'x)' : null}</Text>;
+                return <Text style={styles.cap} key={'cap-' + index}>{index}{capCount > 1 ? ' (' + capCount + 'x)' : null}</Text>;
             }
         });
     };

@@ -1,8 +1,8 @@
 import React from 'react';
-import {Text, View, StyleSheet} from 'react-native';
+import {Text, View} from 'react-native';
 import PropTypes from 'prop-types';
 import styles from './../app.style';
-import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
+import { Table, TableWrapper, Cell } from 'react-native-table-component';
 
 class BingoSheet extends React.Component {
 
@@ -16,7 +16,6 @@ class BingoSheet extends React.Component {
     }
 
     render() {
-        const test = ['text', true];
         return (
             <View style={this.props.active ? styles.sheetContainerActive : styles.sheetContainerInactive}>
                 <Table borderStyle={ styles.tableBorder } style={ styles.table }>
@@ -34,7 +33,7 @@ class BingoSheet extends React.Component {
                     }
                 </Table>
                 {this.props.active?
-                    <Text style={styles.inactiveNote}>zum Deaktivieren Karte gedrückt halten</Text>:
+                    /* <Text style={styles.inactiveNote}>zum Deaktivieren Karte gedrückt halten</Text> */ null:
                     <Text style={styles.inactiveNote}>zum Aktivieren Karte gedrückt halten</Text>
                 }
             </View>
