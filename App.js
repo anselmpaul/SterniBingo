@@ -19,6 +19,7 @@ export default class App extends React.Component {
             input: '',
             activeSheets: [true, false, false, false, false],
             isModalVisible: false,
+            isModalFeedback: false,
             sheets: [
                 [
                     [[15, false], [28, false], [67, false], [43, false], [10, false]],
@@ -60,6 +61,7 @@ export default class App extends React.Component {
     }
 
     componentDidMount() {
+        // mark all already collected caps in active sheets
         this.state.activeSheets.map(sheet => {
             if (sheet === true) {
                 this.checkCapInSheet(this.state.collection);
@@ -78,12 +80,24 @@ export default class App extends React.Component {
                     <Text style={styles.text}>Deine Kronkorken:</Text>
                     {this.renderCollection(this.state.collection)}
                 </ScrollView>
-                <Modal isVisible={this.state.isModalVisible} onBackdropPress={this.toggleModal} onBackButtonPress={this.toggleModal}>
+                <Modal
+                    isVisible={this.state.isModalVisible}
+                    onBackdropPress={this.toggleModal}
+                    onBackButtonPress={this.toggleModal}
+                    onShow={this.state.isModalFeedback ? null : () => { this.textInput.focus(); }}
+                >
                     <View style={styles.modal}>
+
                         <Text>Einen oder mehrere Kronkorken hinzufügen</Text>
-                        {this.state.isModalVisible ? <TextInput keyboardType="numeric" autoFocus value={this.state.input} onChangeText={input => this.setState({input})} onSubmitEditing={this.addCap}/> : null }
+                        <TextInput
+                            keyboardType="numeric"
+                            value={this.state.input}
+                            onChangeText={input => this.setState({input})}
+                            onSubmitEditing={this.addCap}
+                            ref={(ref) => this.textInput = ref }
+                        />
                     </View>
-                  </Modal>
+                </Modal>
                 <TouchableOpacity style={styles.button} onPress={this.toggleModal}>
                     <Text style={styles.buttonText}>
                         NEUER KRONKORKEN
@@ -99,7 +113,8 @@ export default class App extends React.Component {
 
 
     addCap = () => {
-        // Fetch input, close modal, split string of caps, add to collection, empty input field
+        // close modal, split string of caps,
+        // add to collection, empty input field
         const input = this.state.input;
         this.toggleModal();
 
@@ -114,10 +129,10 @@ export default class App extends React.Component {
         // set values in sheets, check for bingo
         this.checkCapInSheet(newCaps);
 
-        // console.log(this.state.sheets[0]);
     };
 
     checkCapInSheet = caps => {
+        // check if caps are in active sheets, set flags
         const sheets = this.state.sheets;
         const newSheets= sheets;
         caps.map(cap => {
@@ -191,6 +206,8 @@ export default class App extends React.Component {
 
     bingo = (dir, location, sheet) => {
         console.log('bingo!', dir, location);
+
+        // remove caps from bingo from collection and sheet
         let collection = this.state.collection;
         if (dir === 'horizontal') {
             for (let y = 0; y < 5; y++) {
@@ -210,13 +227,15 @@ export default class App extends React.Component {
             }
         }
 
+        // disable the bingo sheet
         const activeSheets = this.state.activeSheets;
         activeSheets[sheet] = false;
         this.setState({collection, activeSheets});
-        // TODO: yeah boi!
+        // TODO: give feedback
     };
 
-    // get number from sheet, remove it from collection, check if still in collection, set flag in sheet
+    // get number from sheet, remove it from collection,
+    // check if still in collection, set flag in sheet
     removeCap = (x, y, sheet, collection) => {
         const sheets = this.state.sheets;
         collection.splice(collection.lastIndexOf(sheets[sheet][x][y][0]), 1);
@@ -228,6 +247,7 @@ export default class App extends React.Component {
     };
 
     renderCollection = collection => {
+        // create an array of capValue and capCount (eg 5 (3x))
         const countedCollection = [];
         collection.map(cap => {
             countedCollection[cap] = countedCollection[cap] ? countedCollection[cap] + 1 : 1;
@@ -241,6 +261,7 @@ export default class App extends React.Component {
     };
 
     toggleSheet = sheetIndex => {
+        // set active sheet flag, check if weve got caps already or remove flags
         const activeSheets = this.state.activeSheets;
         const collection = this.state.collection;
         const sheets = this.state.sheets;
