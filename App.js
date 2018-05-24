@@ -1,10 +1,13 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableHighlight, ScrollView, Button } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableHighlight, TouchableOpacity, ScrollView, Button } from 'react-native';
 import BingoSheet from './components/BingoSheet';
 import Modal from "react-native-modal";
+import styles, { colors } from './app.style';
 
 // TODO: save app state persistent
-// TODO: apply styling
+// TODO: apply general sternbung CI styling
+// TODO: implement snap carousel for sheets
+// TODO: implement Feedback "Nice!" "Meh" "Bingo!"
 // TODO: highlight collected caps in sheets
 // TODO: fix toggle sheet
 
@@ -61,12 +64,12 @@ export default class App extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-                <ScrollView>
-                    <Text>Sternburg Bingo</Text>
+                <ScrollView style={styles.appContent}>
+                    <Text style={styles.headline}>Sternburg Bingo</Text>
                     <ScrollView horizontal={true}>
                         {this.renderSheets(this.state.sheets)}
                     </ScrollView>
-                    <Text>Deine Kronkorken:</Text>
+                    <Text style={styles.text}>Deine Kronkorken:</Text>
                     {this.renderCollection(this.state.collection)}
                 </ScrollView>
                 <Modal isVisible={this.state.isModalVisible} onBackdropPress={this.toggleModal} onBackButtonPress={this.toggleModal}>
@@ -75,7 +78,11 @@ export default class App extends React.Component {
                         {this.state.isModalVisible ? <TextInput keyboardType="numeric" autoFocus value={this.state.input} onChangeText={input => this.setState({input})} onSubmitEditing={this.addCap}/> : null }
                     </View>
                 </Modal>
-                <Button title="Neuer Kronkorken" onPress={this.toggleModal} />
+                <TouchableOpacity style={styles.button} onPress={this.toggleModal}>
+                    <Text style={styles.buttonText}>
+                        NEUER KRONKORKEN
+                    </Text>
+                </TouchableOpacity>
             </View>
         );
     }
@@ -218,7 +225,7 @@ export default class App extends React.Component {
 
         return countedCollection.map((capCount, index) => {
             if (capCount !== undefined) {
-                return <Text key={'cap-' + index}>{index} {capCount > 1 ? '(' + capCount + 'x)' : null}</Text>;
+                return <Text style={styles.text} key={'cap-' + index}>{index} {capCount > 1 ? '(' + capCount + 'x)' : null}</Text>;
             }
         });
     };
@@ -258,16 +265,3 @@ export default class App extends React.Component {
     };
 
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-    touchable: {
-      backgroundColor: 'red'
-    },
-    modal: { flex: 1, backgroundColor: '#fff'}
-});
