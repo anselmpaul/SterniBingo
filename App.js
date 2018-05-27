@@ -2,12 +2,12 @@ import React from 'react';
 import { Text, View, TextInput, TouchableHighlight, TouchableOpacity, ScrollView} from 'react-native';
 import BingoSheet from './components/BingoSheet';
 import Modal from "react-native-modal";
-import styles from './app.style';
+import styles, {colors} from './app.style';
+import { Pages } from 'react-native-pages';
 
 
 // TODO: save app state persistent
 // TODO: apply general sternbung CI styling
-// TODO: implement snap carousel for sheets / page-navigation
 // TODO: implement Feedback "Nice!" "Meh" "Bingo!"
 // TODO: overlay for deactivated cards with note in middle - blur? button?
 
@@ -76,10 +76,13 @@ export default class App extends React.Component {
             <View style={styles.container}>
                 <ScrollView style={styles.appContent}>
                     <Text style={styles.headline}>Sternburg Bingo</Text>
-                    <ScrollView horizontal={true}>
-                        {this.renderSheets(this.state.sheets)}
-                    </ScrollView>
+                    <View style={styles.pagesContainer}>
+                        <Pages indicatorColor={colors.background}>
+                            {this.renderSheets(this.state.sheets)}
+                        </Pages>
+                    </View>
                     <Text style={styles.smallHeadline}>gesammelte Kronkorken:</Text>
+
                     <View style={styles.collection}>
                         {this.renderCollection(this.state.collection)}
                     </View>
@@ -222,7 +225,7 @@ export default class App extends React.Component {
         });
         setTimeout(function () {
                 self.toggleModal();
-            }, 5000
+            }, 3000
         );
 
         // remove caps from bingo from collection and sheet

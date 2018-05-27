@@ -34,6 +34,7 @@ export default StyleSheet.create({
     },
     appContent: {
         padding: 10,
+        flex: 1
     },
     modal: {
         flex: 0,
@@ -108,19 +109,15 @@ export default StyleSheet.create({
     //
     // SHEETS
     //
-    sheetContainerActive: {
-        flex: 0,
-        padding: sizes.small,
-        margin: sizes.small,
-        backgroundColor: colors.white,
+    pagesContainer: {
+        flex: 1,
         width: sizes.sheetWidth,
         height: sizes.sheetHeight
     },
-    sheetContainerInactive: {
+    sheetContainer: {
         flex: 0,
         padding: sizes.small,
-        margin: sizes.small,
-        backgroundColor: colors.gray,
+        backgroundColor: colors.white,
         width: sizes.sheetWidth,
         height: sizes.sheetHeight
     },

@@ -17,7 +17,7 @@ class BingoSheet extends React.Component {
 
     render() {
         return (
-            <View style={styles.sheetContainerActive}>
+            <View style={styles.sheetContainer}>
                 <Table borderStyle={ styles.tableBorder } style={ styles.table }>
                     {
                         this.props.numbers.map((rowData, index) => (
