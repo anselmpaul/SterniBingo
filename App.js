@@ -8,9 +8,11 @@ import { Pages } from 'react-native-pages';
 
 // TODO: save app state persistent
 // TODO: apply general sternbung CI styling
-// TODO: implement Feedback "Nice!" "Meh" "Bingo!"
+// TODO: implement more Feedback "Nice!" "Meh"
 // TODO: overlay for deactivated cards with note in middle - blur? button?
-
+// TODO: sort activeCards first
+// TODO: Scores: bingoCounter, CapsTotal
+// TODO: move paginator into view again
 
 export default class App extends React.Component {
     constructor(props) {
@@ -66,7 +68,7 @@ export default class App extends React.Component {
         // mark all already collected caps in active sheets
         this.state.activeSheets.map(sheet => {
             if (sheet === true) {
-                this.checkCapInSheet(this.state.collection);
+                this.checkCapInSheet(this.state.collection, true);
             }
         });
     }
@@ -76,11 +78,9 @@ export default class App extends React.Component {
             <View style={styles.container}>
                 <ScrollView style={styles.appContent}>
                     <Text style={styles.headline}>Sternburg Bingo</Text>
-                    <View style={styles.pagesContainer}>
-                        <Pages indicatorColor={colors.background}>
+                        <Pages indicatorColor={colors.background} containerStyle={styles.pagesContainer}>
                             {this.renderSheets(this.state.sheets)}
                         </Pages>
-                    </View>
                     <Text style={styles.smallHeadline}>gesammelte Kronkorken:</Text>
 
                     <View style={styles.collection}>
@@ -139,12 +139,12 @@ export default class App extends React.Component {
         this.setState({collection, input: ''});
 
         // set values in sheets, check for bingo
-        this.checkCapInSheet(newCaps);
+        this.checkCapInSheet(newCaps, true);
 
     };
 
-    checkCapInSheet = caps => {
-        // check if caps are in active sheets, set flags
+    checkCapInSheet = (caps, isAddition) => {
+        // check if caps are in active sheets, set flags, check for bingo or remove from collection
         const sheets = this.state.sheets;
         const newSheets= sheets;
         caps.map(cap => {
@@ -154,9 +154,11 @@ export default class App extends React.Component {
                         row.map((cell, cellIndex) => {
                             cap = parseInt(cap);
                             if (cell[0] === cap) {
-                                newSheets[sheetIndex][rowIndex][cellIndex][1] = true;
-                                this.setState({sheets: newSheets});
-                                this.bingoChecker(sheetIndex);
+                                newSheets[sheetIndex][rowIndex][cellIndex][1] = isAddition;
+                                this.setState({sheets: newSheets}, () => {
+                                    isAddition ? this.bingoChecker(sheetIndex) : this.removeCap(cap);
+                                });
+
                             }
                         });
                     });
@@ -168,29 +170,36 @@ export default class App extends React.Component {
     bingoChecker = sheetIndex => {
 
         const sheet = this.state.sheets[sheetIndex];
+        let bingoCaps = [];
 
         // check horizontally
-        outerLoop:
             for (let x = 0; x < 5; x++) {
                 for (let y = 0; y < 5; y++) {
                     if (sheet[x][y][1] === false) {
+                        bingoCaps = [];
                         break;
                     } else if (y === 4) {
-                        this.bingo('horizontal', x, sheetIndex);
-                        break outerLoop;
+                        bingoCaps.push(sheet[x][y][0]);
+                        this.bingo(sheetIndex, bingoCaps);
+                        return;
+                    } else {
+                        bingoCaps.push(sheet[x][y][0]);
                     }
                 }
             }
 
         // check vertically
-        outerLoop:
             for (let y = 0; y < 5; y++) {
                 for (let x = 0; x < 5; x++) {
                     if (sheet[x][y][1] === false) {
+                        bingoCaps = [];
                         break;
                     } else if (x === 4) {
-                        this.bingo('vertical', y, sheetIndex);
-                        break outerLoop;
+                        bingoCaps.push(sheet[x][y][0]);
+                        this.bingo(sheetIndex, bingoCaps);
+                        return;
+                    } else {
+                        bingoCaps.push(sheet[x][y][0]);
                     }
                 }
             }
@@ -198,26 +207,33 @@ export default class App extends React.Component {
         // check diagonally down (top-left to bottom-right)
         for (let x = 0; x < 5; x++) {
             if (sheet[x][x][1] === false) {
+                bingoCaps = [];
                 break;
             } else if (x === 4) {
-                this.bingo('diagDown', x, sheetIndex);
-                break;
+                bingoCaps.push(sheet[x][x][0]);
+                this.bingo(sheetIndex, bingoCaps);
+                return;
+            } else {
+                bingoCaps.push(sheet[x][x][0]);
             }
         }
 
         // check diagonally up (top-right to bottom-left)
         for (let x = 0; x < 5; x++) {
             if (sheet[4 - x][x][1] === false) {
+                bingoCaps = [];
                 break;
             } else if (x === 4) {
-                this.bingo('diagUp', x, sheetIndex);
-                break;
+                bingoCaps.push(sheet[4 - x][x][0]);
+                this.bingo(sheetIndex, bingoCaps);
+                return;
+            } else {
+                bingoCaps.push(sheet[4 - x][x][0]);
             }
         }
     };
 
-    bingo = (dir, location, sheet) => {
-        console.log('bingo!', dir, location);
+    bingo = (sheet, bingoCaps) => {
         // show bingo Feedback
         const self = this;
         this.setState({isModalFeedback: true}, function() {
@@ -228,43 +244,19 @@ export default class App extends React.Component {
             }, 3000
         );
 
-        // remove caps from bingo from collection and sheet
-        let collection = this.state.collection;
-        if (dir === 'horizontal') {
-            for (let y = 0; y < 5; y++) {
-                collection = this.removeCap(location, y, sheet, collection);
-            }
-        } else if (dir === 'vertical') {
-            for (let x = 0; x < 5; x++) {
-                collection = this.removeCap(x, location, sheet, collection);
-            }
-        } else if (dir === 'diagDown') {
-            for (let i = 0; i < 5; i++) {
-                collection = this.removeCap(i, i, sheet, collection);
-            }
-        } else if (dir === 'diagUp') {
-            for (let i = 0; i < 5; i++) {
-                collection = this.removeCap(i, 4 - i, sheet, collection);
-            }
-        }
+        this.checkCapInSheet(bingoCaps, false);
 
         // disable the bingo sheet
         const activeSheets = this.state.activeSheets;
         activeSheets[sheet] = false;
-        this.setState({collection, activeSheets});
-        // TODO: give feedback
+        this.setState({activeSheets});
     };
 
-    // get number from sheet, remove it from collection,
-    // check if still in collection, set flag in sheet
-    removeCap = (x, y, sheet, collection) => {
-        const sheets = this.state.sheets;
-        collection.splice(collection.lastIndexOf(sheets[sheet][x][y][0]), 1);
-        if (collection.lastIndexOf(sheets[sheet][x][y][0]) === -1) {
-            sheets[sheet][x][y][1] = false;
-            this.setState({sheets});
-        }
-        return collection;
+    // removes cap from collection
+    removeCap = cap => {
+        const collection = this.state.collection;
+        collection.splice(collection.lastIndexOf(cap), 1);
+        this.setState({collection});
     };
 
     renderCollection = collection => {
@@ -290,7 +282,7 @@ export default class App extends React.Component {
         activeSheets[sheetIndex] = !activeSheets[sheetIndex];
 
         if (activeSheets[sheetIndex]) {
-            this.checkCapInSheet(collection);
+            this.checkCapInSheet(collection, true);
         } else {
             sheets[sheetIndex].map((row, rowIndex) => {
                 row.map((cell, cellIndex) => {

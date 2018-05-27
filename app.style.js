@@ -14,8 +14,11 @@ export const colors = {
 };
 
 export const sizes = {
-    sheetWidth: viewportWidth - (15 * 2),
-    sheetHeight: viewportWidth -(15 * 2),
+    pagesWidth: viewportWidth - (15 * 2),
+    pagesHeight: viewportWidth - (15 * 2),
+    sheetWidth: viewportWidth - (22 * 2), // appPadding (10) + sheetContainerPadding (5) + sheetPadding (3)
+    sheetHeight: viewportWidth -(22 * 2),
+    tiny: 3,
     small: 5,
     medium: 10,
     large: 20,
@@ -111,15 +114,16 @@ export default StyleSheet.create({
     //
     pagesContainer: {
         flex: 1,
-        width: sizes.sheetWidth,
-        height: sizes.sheetHeight
+        width: sizes.pagesWidth,
+        height: sizes.pagesHeight
     },
     sheetContainer: {
         flex: 0,
-        padding: sizes.small,
+        padding: sizes.tiny,
         backgroundColor: colors.white,
         width: sizes.sheetWidth,
-        height: sizes.sheetHeight
+        height: sizes.sheetHeight,
+        margin: sizes.small
     },
     inactiveOverlay: {
         margin: 'auto',
