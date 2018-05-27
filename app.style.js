@@ -9,7 +9,8 @@ export const colors = {
     background: '#DE0000',
     button: '#800000',
     lightGreyBackground: '#ddd',
-    lightBackground: '#ff4d4d'
+    lightBackground: '#ff4d4d',
+    darkTransparent: 'rgba(0, 0, 0, 0.8)'
 };
 
 export const sizes = {
@@ -52,6 +53,10 @@ export default StyleSheet.create({
     //
     text: {
         color: colors.white
+    },
+    textCentered: {
+        color: colors.white,
+        textAlign: 'center'
     },
     tableText: {
         color: colors.black,
@@ -119,11 +124,16 @@ export default StyleSheet.create({
         width: sizes.sheetWidth,
         height: sizes.sheetHeight
     },
-    inactiveNote: {
-        fontStyle: 'italic',
+    inactiveOverlay: {
         margin: 'auto',
-        textAlign: 'center',
-        padding: sizes.small
+        padding: sizes.small,
+        backgroundColor: colors.darkTransparent,
+        position: 'absolute',
+        height: sizes.sheetHeight,
+        width: sizes.sheetWidth,
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     //
     // SHEET TABLE

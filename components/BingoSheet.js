@@ -17,7 +17,7 @@ class BingoSheet extends React.Component {
 
     render() {
         return (
-            <View style={this.props.active ? styles.sheetContainerActive : styles.sheetContainerInactive}>
+            <View style={styles.sheetContainerActive}>
                 <Table borderStyle={ styles.tableBorder } style={ styles.table }>
                     {
                         this.props.numbers.map((rowData, index) => (
@@ -34,7 +34,9 @@ class BingoSheet extends React.Component {
                 </Table>
                 {this.props.active?
                     /* <Text style={styles.inactiveNote}>zum Deaktivieren Karte gedrückt halten</Text> */ null:
-                    <Text style={styles.inactiveNote}>zum Aktivieren Karte gedrückt halten</Text>
+                    <View style={styles.inactiveOverlay}>
+                        <Text style={styles.textCentered}>zum Aktivieren Karte gedrückt halten</Text>
+                    </View>
                 }
             </View>
         );

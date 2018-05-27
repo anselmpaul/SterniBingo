@@ -1,5 +1,15 @@
 {
   "expo": {
-    "sdkVersion": "27.0.0"
+    "sdkVersion": "27.0.0",
+    "name": "SterniBingo",
+    "icon": "./icon.png",
+    "version": "1.0.0",
+    "slug": "sterniBingo",
+    "ios": {
+      "bundleIdentifier": "com.anselmpaul.SterniBingo"
+    },
+    "android": {
+      "package": "com.anselmpaul.SterniBingo"
+    }
   }
 }

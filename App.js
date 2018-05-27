@@ -4,10 +4,12 @@ import BingoSheet from './components/BingoSheet';
 import Modal from "react-native-modal";
 import styles from './app.style';
 
+
 // TODO: save app state persistent
 // TODO: apply general sternbung CI styling
-// TODO: implement snap carousel for sheets
+// TODO: implement snap carousel for sheets / page-navigation
 // TODO: implement Feedback "Nice!" "Meh" "Bingo!"
+// TODO: overlay for deactivated cards with note in middle - blur? button?
 
 
 export default class App extends React.Component {
@@ -29,11 +31,11 @@ export default class App extends React.Component {
                     [[50, false], [88, false], [60, false], [23, false], [87, false]],
                 ],
                 [
-                    [[15, false], [28, false], [67, false], [43, false], [10, false]],
-                    [[9, false], [32, false], [55, false], [83, false], [99, false]],
-                    [[76, false], [42, false], [91, false], [17, false], [72, false]],
-                    [[63, false], [36, false], [48, false], [3, false], [22, false]],
-                    [[50, false], [88, false], [60, false], [23, false], [87, false]],
+                    [[68, false], [41, false], [4, false], [15, false], [90, false]],
+                    [[33, false], [25, false], [57, false], [74, false], [48, false]],
+                    [[16, false], [65, false], [42, false], [96, false], [81, false]],
+                    [[59, false], [87, false], [30, false], [21, false], [85, false]],
+                    [[83, false], [11, false], [69, false], [44, false], [39, false]],
                 ],
                 [
                     [[15, false], [28, false], [67, false], [43, false], [10, false]],
