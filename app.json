@@ -1,15 +1,28 @@
 {
   "expo": {
-    "sdkVersion": "34.0.0",
     "name": "SterniBingo",
-    "icon": "./icon.png",
+    "slug": "SterniBingo",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "version": "1.0.0",
-    "slug": "sterniBingo",
-    "ios": {
-      "bundleIdentifier": "com.anselmpaul.SterniBingo"
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
     },
-    "android": {
-      "package": "com.anselmpaul.SterniBingo"
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
     }
   }
 }
