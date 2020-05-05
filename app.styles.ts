@@ -8,7 +8,7 @@ const colors = {
 };
 
 const sizes = {
-    buttonHeight: 50
+    buttonHeight: 70
 };
 
 export const styles = StyleSheet.create({
@@ -16,7 +16,20 @@ export const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: colors.background,
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
+        height: '100%',
+        width: '100%'
+    },
+    main: {
+        flex: 1,
+        justifyContent: 'space-between',
+        height: '100%',
+        paddingTop: 50,
+        width: '100%',
+        alignItems: 'center'
+    },
+    sheetListView: {
+        width: '80%'
     },
     sheet: {
         display: 'flex',
@@ -25,7 +38,8 @@ export const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderRightWidth: 1,
         borderColor: colors.black,
-        backgroundColor: colors.white
+        backgroundColor: colors.white,
+        aspectRatio: 1
     },
     sheetWrapper: {
         backgroundColor: colors.white,
@@ -43,12 +57,12 @@ export const styles = StyleSheet.create({
     },
     sheetNumber: {
         width: '20%',
+        height: '20%',
         borderTopWidth: 1,
         borderLeftWidth: 1,
         borderColor: colors.black,
-        textAlign: 'center',
-        paddingTop: 9,
-        paddingBottom: 9
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     sheetNumberChecked: {
         backgroundColor: '#DE0000'
@@ -70,6 +84,20 @@ export const styles = StyleSheet.create({
     headline: {
         textAlign: 'center',
         color: colors.white,
-        fontSize: 30
+        fontSize: 30,
+        marginBottom: 10
+    },
+    modal: {
+        backgroundColor: colors.black,
+        height: '100%',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: 10
+    },
+    modalInput: {
+        fontSize: 30,
+        height: 100,
+        textAlign: 'center',
+        color: colors.white
     }
 });

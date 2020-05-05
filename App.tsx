@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
 import {
-  Button,
-  Modal,
-  NativeSyntheticEvent,
-  StyleSheet,
-  Text,
-  TextInput,
-  TextInputSubmitEditingEventData,
-  TouchableOpacity,
-  View
+    Button, FlatList,
+    Modal,
+    NativeSyntheticEvent,
+    StyleSheet,
+    Text,
+    TextInput,
+    TextInputSubmitEditingEventData,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import {styles} from "./app.styles";
 
@@ -22,11 +22,9 @@ firstRun experience
  */
 
 export default function App() {
-  const myCapsInit = [1, 7];
-
   const [addCapModalVisible, setAddCapModalVisible] = useState(false);
   const [capsToAdd, setCapsToAdd] = useState<undefined | string>(undefined);
-  const [myCaps, setMyCaps] = useState(myCapsInit);
+  const [myCaps, setMyCaps] = useState<Array<number>>([]);
 
   const sheets = [
     {
@@ -76,15 +74,19 @@ export default function App() {
     setAddCapModalVisible(!addCapModalVisible);
   };
 
-  const renderSheets = () => sheets.map(sheet => {
-    return (
-        <View style={styles.sheetWrapper}>
+  const renderSheet = (FlatListItem: any) => {
+      const sheet = FlatListItem.item;
+      return (
+        <View style={styles.sheetWrapper} key={'sheet' + sheet.id + 'wrapper'}>
           <View style={styles.sheet} key={'sheet' + sheet.id}>
               {sheet.numbers.map(num =>
-                  <Text key={'number' + sheet.id + num} style={isChecked(num) ? [styles.sheetNumber, styles.sheetNumberChecked] : styles.sheetNumber}>{num}</Text>)}
+                  <View style={isChecked(num) ? [styles.sheetNumber, styles.sheetNumberChecked] : styles.sheetNumber} key={'numberView' + sheet.id + num}>
+                    <Text key={'number' + sheet.id + num} >{num}</Text>
+                  </View>
+              )}
           </View>
         </View>);
-  });
+  };
 
 
 
@@ -92,29 +94,32 @@ export default function App() {
     <View style={styles.container}>
       <Modal
           animationType="fade"
-          transparent={false}
           visible={addCapModalVisible}
       >
-        <TextInput
-            keyboardType={'numeric'}
-            autoFocus={true}
-            placeholder={'Gebe eine oder mehrere Zahlen mit , getrennt ein'}
-            value={capsToAdd}
-            onChangeText={text => setCapsToAdd(text)}
-            onSubmitEditing={handleSubmitNewCaps}
-        />
+          <View style={styles.modal}>
+              <TextInput
+                  multiline
+                  keyboardType={'numeric'}
+                  autoFocus={true}
+                  placeholder="Gebe eine oder mehrere Zahlen ein, getrennt durch ein Komma, Punkt oder Leerzeichen"
+                  value={capsToAdd}
+                  onChangeText={text => setCapsToAdd(text)}
+                  onSubmitEditing={handleSubmitNewCaps}
+                  style={styles.modalInput}
+              />
+          </View>
       </Modal>
 
-      <View>
+      <View style={styles.main}>
         <Text style={styles.headline}>SterniBingoooo</Text>
-        {renderSheets()}
+          <FlatList data={sheets} renderItem={renderSheet} style={styles.sheetListView}/>
+          <TouchableOpacity
+              style={styles.addCapsButton}
+              onPress={handleButton}
+          >
+              <Text style={styles.buttonText}>Saufen!</Text>
+          </TouchableOpacity>
       </View>
-      <TouchableOpacity
-          style={styles.addCapsButton}
-          onPress={handleButton}
-      >
-        <Text style={styles.buttonText}>Saufen!</Text>
-      </TouchableOpacity>
     </View>
   );
 }
