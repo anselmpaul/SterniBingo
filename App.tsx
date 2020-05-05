@@ -28,20 +28,22 @@ export default function App() {
     const [capsToAdd, setCapsToAdd] = useState<undefined | string>(undefined);
     const [mySheets, setMySheets] = useState<Array<number>>([0, 1]);
     const flatListRef = useRef(null);
+  	const [myCaps, setMyCaps] = useState<Array<number>>([]);
 
-
-
-  const [myCaps, setMyCaps] = useState<Array<number>>([]);
-
-  useEffect(() => {
-     if (myCaps.length === 0) {
-     	getDataFromStore('myCaps').then(data => {
-     		if (data) {
-     			setMyCaps(data);
+  	useEffect(() => {
+		 if (myCaps.length === 0) {
+			getDataFromStore('myCaps').then(data => {
+				if (data) {
+					setMyCaps(data);
+				}
+			});
+		 }
+		 getDataFromStore('mySheets').then(data => {
+		 	if (data) {
+		 		setMySheets(data);
 			}
-		});
-     }
-  }, []);
+		 });
+	 }, []);
 
   const isChecked = (value: number) => {
       return Boolean(myCaps.find(cap => cap === value));
@@ -68,8 +70,9 @@ export default function App() {
   		const newSheets = [...mySheets, id];
   		setMySheets(newSheets);
   		saveDataToStore('mySheets', newSheets);
-  		flatListRef.current.scrollToIndex({index: newSheets.length - 1, viewPosition: 0.5});
-  };
+	  	// @ts-ignore
+	  	flatListRef.current.scrollToIndex({index: newSheets.length - 1, viewPosition: 0.5});
+	};
 
   const isActive = (id: number) => mySheets.includes(id);
 
@@ -110,7 +113,7 @@ export default function App() {
 
       <View style={styles.main}>
         <Text style={styles.headline}>SterniBingoooo</Text>
-          <FlatList ref={flatListRef} data={sheets.sort((a, b) => (isActive(a.id) === isActive(b.id)) ? 0 : isActive(a.id) ? -1 : 1)} renderItem={renderSheet} style={styles.sheetListView} keyExtractor={(item) => 'list-item-' + item.id}/>
+          <FlatList ref={flatListRef} style={styles.flatList} contentContainerStyle={styles.sheetListView} data={sheets.sort((a, b) => (isActive(a.id) === isActive(b.id)) ? 0 : isActive(a.id) ? -1 : 1)} renderItem={renderSheet} keyExtractor={(item) => 'list-item-' + item.id}/>
           <TouchableOpacity
               style={styles.addCapsButton}
               onPress={handleButton}

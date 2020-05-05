@@ -28,8 +28,11 @@ export const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center'
     },
+    flatList: {
+        width: '100%'
+    },
     sheetListView: {
-        width: '80%'
+        alignItems: 'center'
     },
     sheet: {
         display: 'flex',
@@ -55,6 +58,8 @@ export const styles = StyleSheet.create({
         shadowOpacity: 0.34,
         shadowRadius: 6.27,
         elevation: 10,
+        width: '80%',
+        aspectRatio: 1
     },
     sheetNumber: {
         width: '20%',
