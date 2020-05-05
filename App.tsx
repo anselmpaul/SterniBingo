@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
+    AsyncStorage,
     FlatList,
     Modal,
     NativeSyntheticEvent,
@@ -22,9 +23,38 @@ firstRun experience
  */
 
 export default function App() {
-  const [addCapModalVisible, setAddCapModalVisible] = useState(false);
-  const [capsToAdd, setCapsToAdd] = useState<undefined | string>(undefined);
+    const [addCapModalVisible, setAddCapModalVisible] = useState(false);
+    const [capsToAdd, setCapsToAdd] = useState<undefined | string>(undefined);
+
+    const getCapsFromStore = async () => {
+        try {
+            const capsPromise = AsyncStorage.getItem('@myCaps');
+            capsPromise.then(caps => {
+                if (caps) {
+                    setMyCaps(JSON.parse(caps));
+                }
+            });
+        } catch(e) {
+            // error reading value
+        }
+    };
+
+    const saveCapsToStore = async () => {
+        try {
+            const capsString = JSON.stringify(myCaps);
+            await AsyncStorage.setItem('@myCaps', capsString);
+        } catch (e) {
+            // saving error
+        }
+    };
+
   const [myCaps, setMyCaps] = useState<Array<number>>([]);
+
+  useEffect(() => {
+     if (myCaps.length === 0) {
+        getCapsFromStore();
+     }
+  }, []);
 
   const isChecked = (value: number) => {
       return Boolean(myCaps.find(cap => cap === value));
@@ -43,6 +73,8 @@ export default function App() {
 
     setCapsToAdd(undefined);
     setAddCapModalVisible(!addCapModalVisible);
+    const savedCaps = saveCapsToStore();
+    savedCaps.then(e => console.log('saved them'));
   };
 
   const renderSheet = (item: any) => {
@@ -50,14 +82,14 @@ export default function App() {
       return (
         <View style={styles.sheetWrapper} key={'sheet' + sheet.id + 'wrapper'}>
           <View style={styles.sheet} key={'sheet' + sheet.id}>
-              {sheet.numbers.map((num: number) =>
-                  <View style={sheet.isActive && isChecked(num) ? [styles.sheetNumber, styles.sheetNumberChecked] : styles.sheetNumber} key={'numberView' + sheet.id + num}>
-                    <Text key={'number' + sheet.id + num} >{num}</Text>
+              {sheet.numbers.map((num: number, index: number) =>
+                  <View style={sheet.isActive && isChecked(num) ? [styles.sheetNumber, styles.sheetNumberChecked] : styles.sheetNumber} key={'numberView' + sheet.id + num + index}>
+                    <Text key={'number' + sheet.id + num + index} >{num.toString()}</Text>
                   </View>
               )}
 
           </View>
-        {sheet.isActive ? null : <View style={styles.inactiveCard}><Text style={styles.inactiveCardText}>Inactive</Text></View>}
+        {sheet.isActive ? null : <View key={'inactiveSheet' + sheet.id} style={styles.inactiveCard}><Text style={styles.inactiveCardText}>Inactive</Text></View>}
         </View>);
   };
 
@@ -83,7 +115,7 @@ export default function App() {
 
       <View style={styles.main}>
         <Text style={styles.headline}>SterniBingoooo</Text>
-          <FlatList data={sheets} renderItem={renderSheet} style={styles.sheetListView}/>
+          <FlatList data={sheets} renderItem={renderSheet} style={styles.sheetListView} keyExtractor={(item) => 'list-item-' + item.id}/>
           <TouchableOpacity
               style={styles.addCapsButton}
               onPress={handleButton}
