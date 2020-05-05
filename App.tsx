@@ -1,9 +1,8 @@
 import React, {useState} from 'react';
 import {
-    Button, FlatList,
+    FlatList,
     Modal,
     NativeSyntheticEvent,
-    StyleSheet,
     Text,
     TextInput,
     TextInputSubmitEditingEventData,
@@ -11,6 +10,7 @@ import {
     View
 } from 'react-native';
 import {styles} from "./app.styles";
+import {sheets} from './sheets';
 
 /* TODOs
 styling
@@ -25,35 +25,6 @@ export default function App() {
   const [addCapModalVisible, setAddCapModalVisible] = useState(false);
   const [capsToAdd, setCapsToAdd] = useState<undefined | string>(undefined);
   const [myCaps, setMyCaps] = useState<Array<number>>([]);
-
-  const sheets = [
-    {
-      id: 0,
-      isActive: true,
-      numbers:
-          [
-              91, 70, 39, 63,  7,
-              25, 46, 82, 18, 54,
-              79, 68, 13, 22, 86,
-               2, 57, 35, 94, 40,
-              43,  1, 72, 26, 80
-          ]
-    },
-    {
-      id: 1,
-      isActive: false,
-      numbers:
-        [
-            10, 81, 54, 29, 47,
-            64,  4, 76, 13, 92,
-            70, 95, 50, 44, 16,
-            28, 26, 33, 77, 40,
-            11, 53, 89, 56,  2
-        ]
-    }
-  ];
-
-
 
   const isChecked = (value: number) => {
       return Boolean(myCaps.find(cap => cap === value));
@@ -74,21 +45,21 @@ export default function App() {
     setAddCapModalVisible(!addCapModalVisible);
   };
 
-  const renderSheet = (FlatListItem: any) => {
-      const sheet = FlatListItem.item;
+  const renderSheet = (item: any) => {
+      const sheet = item.item;
       return (
         <View style={styles.sheetWrapper} key={'sheet' + sheet.id + 'wrapper'}>
           <View style={styles.sheet} key={'sheet' + sheet.id}>
-              {sheet.numbers.map(num =>
-                  <View style={isChecked(num) ? [styles.sheetNumber, styles.sheetNumberChecked] : styles.sheetNumber} key={'numberView' + sheet.id + num}>
+              {sheet.numbers.map((num: number) =>
+                  <View style={sheet.isActive && isChecked(num) ? [styles.sheetNumber, styles.sheetNumberChecked] : styles.sheetNumber} key={'numberView' + sheet.id + num}>
                     <Text key={'number' + sheet.id + num} >{num}</Text>
                   </View>
               )}
+
           </View>
+        {sheet.isActive ? null : <View style={styles.inactiveCard}><Text style={styles.inactiveCardText}>Inactive</Text></View>}
         </View>);
   };
-
-
 
   return (
     <View style={styles.container}>

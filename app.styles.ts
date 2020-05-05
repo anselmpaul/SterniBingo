@@ -42,6 +42,7 @@ export const styles = StyleSheet.create({
         aspectRatio: 1
     },
     sheetWrapper: {
+        height: 'auto',
         backgroundColor: colors.white,
         borderRadius: 8,
         padding: 10,
@@ -98,6 +99,20 @@ export const styles = StyleSheet.create({
         fontSize: 30,
         height: 100,
         textAlign: 'center',
+        color: colors.white
+    },
+    inactiveCard: {
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        position: 'absolute',
+        top: 10,
+        left: 10,
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    inactiveCardText: {
         color: colors.white
     }
 });
