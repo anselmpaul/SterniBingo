@@ -1,6 +1,6 @@
 import {StyleSheet} from "react-native";
 
-const colors = {
+export const colors = {
     background: '#DE0000',
     white: '#fff',
     button: '#800000',

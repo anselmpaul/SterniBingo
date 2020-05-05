@@ -1,17 +1,18 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
-    AsyncStorage,
-    FlatList,
-    Modal,
-    NativeSyntheticEvent,
-    Text,
-    TextInput,
-    TextInputSubmitEditingEventData,
-    TouchableOpacity,
-    View
+	AsyncStorage, Button,
+	FlatList,
+	Modal,
+	NativeSyntheticEvent,
+	Text,
+	TextInput,
+	TextInputSubmitEditingEventData,
+	TouchableOpacity,
+	View
 } from 'react-native';
-import {styles} from "./app.styles";
+import {colors, styles} from "./app.styles";
 import {sheets} from './sheets';
+import {getDataFromStore, saveDataToStore} from "./AsyncStore";
 
 /* TODOs
 styling
@@ -25,34 +26,20 @@ firstRun experience
 export default function App() {
     const [addCapModalVisible, setAddCapModalVisible] = useState(false);
     const [capsToAdd, setCapsToAdd] = useState<undefined | string>(undefined);
+    const [mySheets, setMySheets] = useState<Array<number>>([0, 1]);
+    const flatListRef = useRef(null);
 
-    const getCapsFromStore = async () => {
-        try {
-            const capsPromise = AsyncStorage.getItem('@myCaps');
-            capsPromise.then(caps => {
-                if (caps) {
-                    setMyCaps(JSON.parse(caps));
-                }
-            });
-        } catch(e) {
-            // error reading value
-        }
-    };
 
-    const saveCapsToStore = async () => {
-        try {
-            const capsString = JSON.stringify(myCaps);
-            await AsyncStorage.setItem('@myCaps', capsString);
-        } catch (e) {
-            // saving error
-        }
-    };
 
   const [myCaps, setMyCaps] = useState<Array<number>>([]);
 
   useEffect(() => {
      if (myCaps.length === 0) {
-        getCapsFromStore();
+     	getDataFromStore('myCaps').then(data => {
+     		if (data) {
+     			setMyCaps(data);
+			}
+		});
      }
   }, []);
 
@@ -67,15 +54,24 @@ export default function App() {
   const handleSubmitNewCaps = (newCapsEvent: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => {
     const newCaps = newCapsEvent.nativeEvent.text.match(/\d+/g);
     if (newCaps) {
-      const newCapsAsInts = newCaps.map(c => parseInt(c));
-      setMyCaps([...myCaps, ...newCapsAsInts]);
+      	const newCapsAsInts = newCaps.map(c => parseInt(c));
+      	const allCaps = [...myCaps, ...newCapsAsInts];
+      	setMyCaps(allCaps);
+		saveDataToStore('myCaps', allCaps);
     }
 
     setCapsToAdd(undefined);
     setAddCapModalVisible(!addCapModalVisible);
-    const savedCaps = saveCapsToStore();
-    savedCaps.then(e => console.log('saved them'));
   };
+
+  const handleUnlockSheet = (id: number) => () => {
+  		const newSheets = [...mySheets, id];
+  		setMySheets(newSheets);
+  		saveDataToStore('mySheets', newSheets);
+  		flatListRef.current.scrollToIndex({index: newSheets.length - 1, viewPosition: 0.5});
+  };
+
+  const isActive = (id: number) => mySheets.includes(id);
 
   const renderSheet = (item: any) => {
       const sheet = item.item;
@@ -87,9 +83,8 @@ export default function App() {
                     <Text key={'number' + sheet.id + num + index} >{num.toString()}</Text>
                   </View>
               )}
-
           </View>
-        {sheet.isActive ? null : <View key={'inactiveSheet' + sheet.id} style={styles.inactiveCard}><Text style={styles.inactiveCardText}>Inactive</Text></View>}
+        {mySheets.includes(sheet.id) ? null : <View key={'inactiveSheet' + sheet.id} style={styles.inactiveCard}><Button color={colors.button} title="Karte entsperren" onPress={handleUnlockSheet(sheet.id)}/></View>}
         </View>);
   };
 
@@ -115,7 +110,7 @@ export default function App() {
 
       <View style={styles.main}>
         <Text style={styles.headline}>SterniBingoooo</Text>
-          <FlatList data={sheets} renderItem={renderSheet} style={styles.sheetListView} keyExtractor={(item) => 'list-item-' + item.id}/>
+          <FlatList ref={flatListRef} data={sheets.sort((a, b) => (isActive(a.id) === isActive(b.id)) ? 0 : isActive(a.id) ? -1 : 1)} renderItem={renderSheet} style={styles.sheetListView} keyExtractor={(item) => 'list-item-' + item.id}/>
           <TouchableOpacity
               style={styles.addCapsButton}
               onPress={handleButton}
