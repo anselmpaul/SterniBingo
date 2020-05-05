@@ -1,18 +1,28 @@
 import React, {useState} from 'react';
-import {Button, Modal, StyleSheet, Text, TextInput, View} from 'react-native';
+import {
+  Button,
+  Modal,
+  NativeSyntheticEvent,
+  StyleSheet,
+  Text,
+  TextInput,
+  TextInputSubmitEditingEventData,
+  TouchableOpacity,
+  View
+} from 'react-native';
 import {styles} from "./app.styles";
 
+/* TODOs
+styling
+bingocheck
+storage
+corner cases
+
+firstRun experience
+ */
+
 export default function App() {
-  const myCapsInit = [
-    {
-      value: 1,
-      amount: 2
-    },
-    {
-      value: 7,
-      amount: 2
-    }
-  ];
+  const myCapsInit = [1, 7];
 
   const [addCapModalVisible, setAddCapModalVisible] = useState(false);
   const [capsToAdd, setCapsToAdd] = useState<undefined | string>(undefined);
@@ -22,40 +32,60 @@ export default function App() {
     {
       id: 0,
       isActive: true,
-      numbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
+      numbers:
+          [
+              91, 70, 39, 63,  7,
+              25, 46, 82, 18, 54,
+              79, 68, 13, 22, 86,
+               2, 57, 35, 94, 40,
+              43,  1, 72, 26, 80
+          ]
     },
     {
       id: 1,
       isActive: false,
-      numbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
+      numbers:
+        [
+            10, 81, 54, 29, 47,
+            64,  4, 76, 13, 92,
+            70, 95, 50, 44, 16,
+            28, 26, 33, 77, 40,
+            11, 53, 89, 56,  2
+        ]
     }
   ];
 
 
 
-  const isChecked = (value) => {
-      return Boolean(myCaps.find(cap => cap.value === value && cap.amount > 0));
+  const isChecked = (value: number) => {
+      return Boolean(myCaps.find(cap => cap === value));
   };
 
   const handleButton = () => {
     setAddCapModalVisible(!addCapModalVisible);
   };
 
-  const handleSubmitNewCaps = (newCaps) => {
-    const newMyCaps = {
-      // @ts-ignore
-      value: parseInt(newCaps.nativeEvent.text),
-      amount: 1
-    };
-    console.log(newMyCaps);
-    const test = [...myCaps, newMyCaps];
-    console.log(test);
-    // @ts-ignore
-    setMyCaps(test);
-    console.log(myCaps);
+  const handleSubmitNewCaps = (newCapsEvent: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => {
+    const newCaps = newCapsEvent.nativeEvent.text.match(/\d+/g);
+    if (newCaps) {
+      const newCapsAsInts = newCaps.map(c => parseInt(c));
+      setMyCaps([...myCaps, ...newCapsAsInts]);
+    }
+
     setCapsToAdd(undefined);
     setAddCapModalVisible(!addCapModalVisible);
   };
+
+  const renderSheets = () => sheets.map(sheet => {
+    return (
+        <View style={styles.sheetWrapper}>
+          <View style={styles.sheet} key={'sheet' + sheet.id}>
+              {sheet.numbers.map(num =>
+                  <Text key={'number' + sheet.id + num} style={isChecked(num) ? [styles.sheetNumber, styles.sheetNumberChecked] : styles.sheetNumber}>{num}</Text>)}
+          </View>
+        </View>);
+  });
+
 
 
   return (
@@ -76,13 +106,15 @@ export default function App() {
       </Modal>
 
       <View>
-        <Text>SterniBingoooo</Text>
-        {sheets.map(sheet => {
-        return <View style={styles.sheet} key={'sheet' + sheet.id}>
-          {sheet.numbers.map(num => <Text key={'number' + sheet.id + num} style={isChecked(num) ? [styles.sheetNumber, styles.sheetNumberChecked] : styles.sheetNumber}>{num}</Text>)}
-        </View>
-      })}</View>
-      <Button title={"Saufen!"} onPress={handleButton}/>
+        <Text style={styles.headline}>SterniBingoooo</Text>
+        {renderSheets()}
+      </View>
+      <TouchableOpacity
+          style={styles.addCapsButton}
+          onPress={handleButton}
+      >
+        <Text style={styles.buttonText}>Saufen!</Text>
+      </TouchableOpacity>
     </View>
   );
 }
