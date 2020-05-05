@@ -11,16 +11,19 @@ import {
 	View
 } from 'react-native';
 import {colors, styles} from "./app.styles";
-import {sheets} from './sheets';
+import {bingoCheck, createTheBingoThing, sheets} from './sheets';
 import {getDataFromStore, saveDataToStore} from "./AsyncStore";
+import Snackbar from 'react-native-snackbar';
 
 /* TODOs
 styling
 bingocheck
-storage
-corner cases
+corner cases: double bingo one cap
 
 firstRun experience
+
+reset theThing when getting or removing card,
+then quietly check for bingos again (when adding new card)
  */
 
 export default function App() {
@@ -29,6 +32,7 @@ export default function App() {
     const [mySheets, setMySheets] = useState<Array<number>>([0, 1]);
     const flatListRef = useRef(null);
   	const [myCaps, setMyCaps] = useState<Array<number>>([]);
+  	const [theBingoThing, setTheBingoThing] = useState({});
 
   	useEffect(() => {
 		 if (myCaps.length === 0) {
@@ -41,6 +45,7 @@ export default function App() {
 		 getDataFromStore('mySheets').then(data => {
 		 	if (data) {
 		 		setMySheets(data);
+				setTheBingoThing(createTheBingoThing(sheets.filter(sheet => data.includes(sheet.id))));
 			}
 		 });
 	 }, []);
@@ -58,8 +63,19 @@ export default function App() {
     if (newCaps) {
       	const newCapsAsInts = newCaps.map(c => parseInt(c));
       	const allCaps = [...myCaps, ...newCapsAsInts];
+      	console.log(allCaps);
       	setMyCaps(allCaps);
+      	console.log(myCaps);
 		saveDataToStore('myCaps', allCaps);
+		newCapsAsInts.map(cap => {
+			const result = bingoCheck(cap, theBingoThing, myCaps);
+			/*Snackbar.show({
+				text: JSON.stringify(result),
+				duration: Snackbar.LENGTH_SHORT,
+			});*/
+			console.log(result);
+
+		});
     }
 
     setCapsToAdd(undefined);
@@ -82,12 +98,12 @@ export default function App() {
         <View style={styles.sheetWrapper} key={'sheet' + sheet.id + 'wrapper'}>
           <View style={styles.sheet} key={'sheet' + sheet.id}>
               {sheet.numbers.map((num: number, index: number) =>
-                  <View style={sheet.isActive && isChecked(num) ? [styles.sheetNumber, styles.sheetNumberChecked] : styles.sheetNumber} key={'numberView' + sheet.id + num + index}>
+                  <View style={isActive(sheet.id) && isChecked(num) ? [styles.sheetNumber, styles.sheetNumberChecked] : styles.sheetNumber} key={'numberView' + sheet.id + num + index}>
                     <Text key={'number' + sheet.id + num + index} >{num.toString()}</Text>
                   </View>
               )}
           </View>
-        {mySheets.includes(sheet.id) ? null : <View key={'inactiveSheet' + sheet.id} style={styles.inactiveCard}><Button color={colors.button} title="Karte entsperren" onPress={handleUnlockSheet(sheet.id)}/></View>}
+        {isActive(sheet.id) ? null : <View key={'inactiveSheet' + sheet.id} style={styles.inactiveCard}><Button color={colors.button} title="Karte entsperren" onPress={handleUnlockSheet(sheet.id)}/></View>}
         </View>);
   };
 
