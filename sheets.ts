@@ -18,6 +18,7 @@ type Result = {
     isDouble?: boolean,
     isBlank?: boolean,
     isPoint?: boolean,
+    sheet?: number,
     bingoCombo?: Array<number>,
     updatedBingoThing: Thing
 }
@@ -96,7 +97,7 @@ export const createTheBingoThing = (sheets: Array<Sheet>) => {
         theThing[x].push({
             sheetId,
             neighbors: neighbors,
-            missingNeighbors: neighbors
+            missingNeighbors: Array.from(neighbors)
         });
     });
 
@@ -148,28 +149,33 @@ export const bingoCheck = (cap: number, theThing: Thing, myCaps: Array<number>):
         }
     }
 
+    // BINGO!
     if (entry.some(bingos => bingos.missingNeighbors.length === 0)) {
         const theBingo = entry.find(bingo => bingo.missingNeighbors.length === 0);
-        return {
-            isBingo: true,
-            updatedBingoThing: theThing,
-			// @ts-ignore
-            bingoCombo: [...theBingo.neighbors, cap]
+        if (theBingo) {
+            return {
+                isBingo: true,
+                updatedBingoThing: theThing,
+                sheet: theBingo.sheetId,
+                bingoCombo: [...theBingo.neighbors, cap]
+            }
         }
-    } else {
-        // remove itself as missing from its neighbors
-        entry.map(bingo => {
-            bingo.missingNeighbors.map(x =>
-                theThing[x].map(y => {
-                    const i = y.missingNeighbors.findIndex(z => z === cap);
+    }
+
+    // remove itself as missing from its neighbors
+    entry.map(bingo => {
+        bingo.missingNeighbors.map(x =>
+            theThing[x].map(y => {
+                const i = y.missingNeighbors.findIndex(z => z === cap);
+                if (i !== -1) {
                     y.missingNeighbors.splice(i, 1);
                 }
-            ));
-        });
-        delete theThing[cap];
-        return {
-            isPoint: true,
-            updatedBingoThing: theThing
-        }
+            }
+        ));
+    });
+    delete theThing[cap];
+    return {
+        isPoint: true,
+        updatedBingoThing: theThing
     }
 };

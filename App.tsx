@@ -14,7 +14,6 @@ import {
 import {capsCollection, colors, styles} from "./app.styles";
 import {bingoCheck, createTheBingoThing, sheets} from './sheets';
 import {getDataFromStore, saveDataToStore} from "./AsyncStore";
-import ViewPager from "@react-native-community/viewpager";
 
 /* TODOs
 styling
@@ -34,15 +33,17 @@ export default function App() {
     const flatListRef = useRef(null);
   	const [myCaps, setMyCaps] = useState<Array<number>>([]);
   	const [theBingoThing, setTheBingoThing] = useState({});
+  	const [myBingos, setMyBingos] = useState<Array<{id: number, combo: Array<number>}>>([]);
 
   	useEffect(() => {
-		 if (myCaps.length === 0) {
-			getDataFromStore('myCaps').then(data => {
-				if (data) {
-					setMyCaps(data);
-				}
-			});
-		 }
+  		// get caps
+		getDataFromStore('myCaps').then(data => {
+			if (data) {
+				setMyCaps(data);
+			}
+		});
+
+		// get sheets and create bingo thing
 		 getDataFromStore('mySheets').then(data => {
 		 	if (data) {
 		 		setMySheets(data);
@@ -50,8 +51,15 @@ export default function App() {
 			}
 		 });
 
+		 // get existing bingos
+		 getDataFromStore('myBingos').then(data => {
+		 	if (data) {
+		 		setMyBingos(data);
+			}
+		 });
+
 		 // reset saved data during dev:
-	  	 saveDataToStore('myCaps', [91, 70]);
+	  	 saveDataToStore('myCaps', []);
 	 }, []);
 
   const isChecked = (value: number) => {
@@ -71,12 +79,13 @@ export default function App() {
 		saveDataToStore('myCaps', allCaps);
 		newCapsAsInts.map(cap => {
 			const result = bingoCheck(cap, theBingoThing, myCaps);
-			/*Snackbar.show({
-				text: JSON.stringify(result),
-				duration: Snackbar.LENGTH_SHORT,
-			});*/
 			console.log(result);
-
+			if (result.isBingo && result.sheet && result.bingoCombo) {
+				setMyBingos([...myBingos, {
+					id: result.sheet,
+					combo: result.bingoCombo
+				}])
+			}
 		});
     }
 
@@ -92,6 +101,9 @@ export default function App() {
 	  	flatListRef.current.scrollToIndex({index: newSheets.length - 1, viewPosition: 0.5});
 	};
 
+  const handleResolveBingo = () => {
+  };
+
   const isActive = (id: number) => mySheets.includes(id);
 
   const renderSheet = (item: any) => {
@@ -105,7 +117,9 @@ export default function App() {
                   </View>
               )}
           </View>
-        {isActive(sheet.id) ? null : <View key={'inactiveSheet' + sheet.id} style={styles.inactiveCard}><Button color={colors.button} title="Karte entsperren" onPress={handleUnlockSheet(sheet.id)}/></View>}
+        	{isActive(sheet.id) ? null : <View key={'inactiveSheet' + sheet.id} style={styles.inactiveCard}><Button color={colors.button} title="Karte entsperren" onPress={handleUnlockSheet(sheet.id)}/></View>}
+			{console.log(myBingos)}
+			{myBingos.find(b => b.id === sheet.id) ? <View key={'bingoSheet' + sheet.id} style={styles.inactiveCard}><Button color={colors.button} title="Bingo einlösen!" onPress={handleResolveBingo}/></View> : null}
         </View>);
   };
 
