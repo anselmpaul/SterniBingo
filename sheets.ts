@@ -153,6 +153,7 @@ export const bingoCheck = (cap: number, theThing: Thing, myCaps: Array<number>):
         return {
             isBingo: true,
             updatedBingoThing: theThing,
+			// @ts-ignore
             bingoCombo: [...theBingo.neighbors, cap]
         }
     } else {

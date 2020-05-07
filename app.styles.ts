@@ -28,11 +28,17 @@ export const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center'
     },
-    flatList: {
-        width: '100%'
+    contentContainer: {
+        flexDirection: 'column'
     },
-    sheetListView: {
+    flatList: {
+        backgroundColor: colors.black
+    },
+    flatListContainer: {
         alignItems: 'center'
+    },
+    flatListContainerTest: {
+        height: '60%'
     },
     sheet: {
         display: 'flex',
@@ -94,7 +100,7 @@ export const styles = StyleSheet.create({
         marginBottom: 10
     },
     modal: {
-        backgroundColor: colors.black,
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
         height: '100%',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -119,5 +125,27 @@ export const styles = StyleSheet.create({
     },
     inactiveCardText: {
         color: colors.white
+    }
+});
+
+export const capsCollection = StyleSheet.create({
+    capIcon: {
+        width: 30,
+        height: 10
+    },
+    capsCollection: {
+        padding: 10
+    },
+    text: {
+        color: colors.white
+    },
+    capsStacks: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: 'flex-end',
+    },
+    capsStack: {
+        padding: 3,
+        alignItems: 'center'
     }
 });

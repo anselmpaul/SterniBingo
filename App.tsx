@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {
-	AsyncStorage, Button,
+	Button,
 	FlatList,
 	Modal,
 	NativeSyntheticEvent,
@@ -8,16 +8,17 @@ import {
 	TextInput,
 	TextInputSubmitEditingEventData,
 	TouchableOpacity,
-	View
+	View,
+	Image
 } from 'react-native';
-import {colors, styles} from "./app.styles";
+import {capsCollection, colors, styles} from "./app.styles";
 import {bingoCheck, createTheBingoThing, sheets} from './sheets';
 import {getDataFromStore, saveDataToStore} from "./AsyncStore";
-import Snackbar from 'react-native-snackbar';
+import ViewPager from "@react-native-community/viewpager";
 
 /* TODOs
 styling
-bingocheck
+bingocheck feedback
 corner cases: double bingo one cap
 
 firstRun experience
@@ -48,6 +49,9 @@ export default function App() {
 				setTheBingoThing(createTheBingoThing(sheets.filter(sheet => data.includes(sheet.id))));
 			}
 		 });
+
+		 // reset saved data during dev:
+	  	 saveDataToStore('myCaps', [91, 70]);
 	 }, []);
 
   const isChecked = (value: number) => {
@@ -63,9 +67,7 @@ export default function App() {
     if (newCaps) {
       	const newCapsAsInts = newCaps.map(c => parseInt(c));
       	const allCaps = [...myCaps, ...newCapsAsInts];
-      	console.log(allCaps);
       	setMyCaps(allCaps);
-      	console.log(myCaps);
 		saveDataToStore('myCaps', allCaps);
 		newCapsAsInts.map(cap => {
 			const result = bingoCheck(cap, theBingoThing, myCaps);
@@ -107,11 +109,26 @@ export default function App() {
         </View>);
   };
 
+  const renderMyCaps = () => {
+  	const capsCollected: { [cap: number]: Array<number> } = {};
+  	myCaps.sort((a, b) => a - b).map(cap => capsCollected[cap] ? capsCollected[cap].push(cap) : capsCollected[cap] = [cap]);
+  	return Object.keys(capsCollected).map(cap => {
+  		return (
+		<View key={'capStack' + cap} style={capsCollection.capsStack}>
+			{capsCollected[cap].map((cap, index) => <Image key={'capStackImage' + cap + index} source={require("./assets/capIcon.png")} style={capsCollection.capIcon}/>)}
+			<Text style={capsCollection.text}>{cap}</Text>
+		</View>)
+	})
+  };
+
+
   return (
     <View style={styles.container}>
       <Modal
           animationType="fade"
           visible={addCapModalVisible}
+		  transparent
+		  onRequestClose={() => setAddCapModalVisible(!addCapModalVisible)}
       >
           <View style={styles.modal}>
               <TextInput
@@ -129,7 +146,17 @@ export default function App() {
 
       <View style={styles.main}>
         <Text style={styles.headline}>SterniBingoooo</Text>
-          <FlatList ref={flatListRef} style={styles.flatList} contentContainerStyle={styles.sheetListView} data={sheets.sort((a, b) => (isActive(a.id) === isActive(b.id)) ? 0 : isActive(a.id) ? -1 : 1)} renderItem={renderSheet} keyExtractor={(item) => 'list-item-' + item.id}/>
+		  <View style={styles.contentContainer}>
+			  <View style={styles.flatListContainerTest}>
+		  		<FlatList ref={flatListRef} horizontal style={styles.flatList} contentContainerStyle={styles.flatListContainer} data={sheets.sort((a, b) => (isActive(a.id) === isActive(b.id)) ? 0 : isActive(a.id) ? -1 : 1)} renderItem={renderSheet} keyExtractor={(item) => 'list-item-' + item.id}/>
+			  </View>
+		  	<View style={capsCollection.capsCollection}>
+				<Text style={capsCollection.text}>Meine Kronkorken</Text>
+				<View style={capsCollection.capsStacks}>
+					{renderMyCaps()}
+				</View>
+			</View>
+		  </View>
           <TouchableOpacity
               style={styles.addCapsButton}
               onPress={handleButton}
