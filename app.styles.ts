@@ -1,7 +1,7 @@
 import {Dimensions, StyleSheet} from "react-native";
 
 export const colors = {
-    background: '#c01209',
+    red: '#c01209',
     white: '#fff',
     button: '#800000',
     black: '#000'
@@ -22,7 +22,7 @@ const fontSizes = {
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colors.background,
+        backgroundColor: colors.red,
         alignItems: 'center',
         justifyContent: 'space-between',
         height: '100%',
@@ -97,7 +97,7 @@ export const styles = StyleSheet.create({
         alignItems: 'center'
     },
     sheetNumberChecked: {
-        backgroundColor: colors.background,
+        backgroundColor: colors.red,
     },
     sheetNumberText: {
         fontSize: fontSizes.sheetNumber,
@@ -135,19 +135,6 @@ export const styles = StyleSheet.create({
         fontSize: fontSizes.headline,
         fontWeight: '400'
 
-    },
-    modal: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        height: '100%',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        padding: 10
-    },
-    modalInput: {
-        fontSize: fontSizes.input,
-        height: 100,
-        textAlign: 'center',
-        color: colors.white
     },
     inactiveCard: {
         width: '100%',
@@ -207,5 +194,65 @@ export const capsCollection = StyleSheet.create({
     capsStack: {
         padding: 3,
         alignItems: 'center'
+    }
+});
+
+export const modal = StyleSheet.create({
+   backgroundImage: {
+       flex: 1,
+       resizeMode: "cover",
+       justifyContent: "center",
+       alignItems: 'center',
+       width: 200,
+       height: 200,
+   },
+    backgroundImageSmall: {
+        width: 50,
+        height: 50,
+        justifyContent: "center",
+        alignItems: 'center',
+    },
+    input: {
+        fontSize: fontSizes.input,
+        height: 100,
+        textAlign: 'center',
+        color: colors.white
+    },
+    modal: {
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        height: '100%',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    latestCapContentContainer: {
+       height: 200
+    },
+    capsToAdd: {
+       marginTop: 10,
+       flexDirection: 'row',
+        minHeight: 50,
+        width: '100%',
+        flexWrap: 'wrap',
+        justifyContent: 'center'
+    },
+    capsToAddText: {
+       color: colors.white
+    },
+    latestCapArea: {
+       flexGrow: 1,
+        justifyContent: 'center'
+    },
+    addAnother: {
+       backgroundColor: colors.red,
+        display: 'flex',
+        alignSelf: 'stretch',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: sizes.buttonHeight,
+    },
+    addAnotherDisabled: {
+       backgroundColor: colors.button
     }
 });

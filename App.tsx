@@ -3,18 +3,17 @@ import Collapsible from 'react-native-collapsible';
 import {
     Button,
     Image,
+    ImageBackground,
     Modal,
-    NativeSyntheticEvent,
     ScrollView,
     Text,
     TextInput,
-    TextInputSubmitEditingEventData,
     ToastAndroid,
     TouchableOpacity,
     TouchableWithoutFeedback,
     View
 } from 'react-native';
-import {capsCollection, colors, styles} from "./app.styles";
+import {capsCollection, colors, modal, styles} from "./app.styles";
 // @ts-ignore
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {bingoCheck, createTheBingoThing, Result, sheets, updateBingoThing} from './sheets';
@@ -28,7 +27,8 @@ type Bingo = {
 
 export default function App() {
     const [addCapModalVisible, setAddCapModalVisible] = useState(false);
-    const [capsToAdd, setCapsToAdd] = useState<undefined | string>(undefined);
+    const [capsToAdd, setCapsToAdd] = useState<Array<number>>([]);
+    const [latestCapToAdd, setLatestCapToAdd] = useState('');
     const [mySheets, setMySheets] = useState<Array<number>>([]);
     const flatListRef = useRef(null);
     const capsInputRef = useRef(null);
@@ -103,14 +103,22 @@ export default function App() {
         return 'meh';
     };
 
-    const handleSubmitNewCaps = (newCapsEvent: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => {
-        const newCaps = newCapsEvent.nativeEvent.text.match(/\d+/g);
-        if (newCaps) {
-            const newCapsAsInts = newCaps.map(c => parseInt(c));
-            const allCaps = [...myCaps, ...newCapsAsInts];
+    const handleSubmitNewCap = () => {
+        // const newCap = newCapEvent.nativeEvent.text.match(/\d+/g);
+        setCapsToAdd([...capsToAdd, parseInt(latestCapToAdd)]);
+        setLatestCapToAdd('');
+        if (capsInputRef.current) {
+            // @ts-ignore
+            capsInputRef.current.focus();
+        }
+    };
+
+    const handleSubmitNewCaps = () => {
+        if (capsToAdd.length > 0) {
+            const allCaps = [...myCaps, ...capsToAdd];
             setMyCaps(allCaps);
             saveDataToStore('myCaps', allCaps);
-            newCapsAsInts.map(cap => {
+            capsToAdd.map(cap => {
                 const result = bingoCheck(cap, theBingoThing, myCaps);
                 setTheBingoThing(result.updatedBingoThing);
                 console.log('result', result);
@@ -120,7 +128,8 @@ export default function App() {
             });
         }
 
-        setCapsToAdd(undefined);
+        setLatestCapToAdd('');
+        setCapsToAdd([]);
         setAddCapModalVisible(!addCapModalVisible);
     };
 
@@ -161,7 +170,7 @@ export default function App() {
         });
         setTheBingoThing(newThing);
         // @ts-ignore
-        flatListRef.current.scrollToIndex({index: newSheets.length - 1, viewPosition: 0.5});
+        flatListRef.current.scrollTo({x: newSheets.length - 1, y: 0.5});
     };
 
     const handleResolveBingo = (bingo: Bingo) => () => {
@@ -242,18 +251,34 @@ export default function App() {
                 transparent
                 onRequestClose={() => setAddCapModalVisible(!addCapModalVisible)}
             >
-                <View style={styles.modal}>
-                    <TextInput
-                        multiline
-                        keyboardType={'numeric'}
-                        autoFocus={true}
-                        ref={capsInputRef}
-                        placeholder="Gebe eine oder mehrere Zahlen ein, getrennt durch ein Komma, Punkt oder Leerzeichen"
-                        value={capsToAdd}
-                        onChangeText={text => setCapsToAdd(text)}
-                        onSubmitEditing={handleSubmitNewCaps}
-                        style={styles.modalInput}
-                    />
+                <View style={modal.modal}>
+                    <View style={modal.capsToAdd}>
+                        {capsToAdd.map(cap =>
+                            <ImageBackground source={require('./assets/capInside.png')} style={modal.backgroundImageSmall}>
+                                <Text style={modal.capsToAddText}>{cap}</Text>
+                            </ImageBackground>)}
+                    </View>
+                    <View style={modal.latestCapArea}>
+                        <View style={modal.latestCapContentContainer}>
+                            <ImageBackground source={require('./assets/capInside.png')} style={modal.backgroundImage}>
+                                <TextInput
+                                    multiline
+                                    keyboardType={'numeric'}
+                                    autoFocus={true}
+                                    ref={capsInputRef}
+                                    placeholder="0"
+                                    value={latestCapToAdd}
+                                    onChangeText={text => setLatestCapToAdd(text)}
+                                    onSubmitEditing={handleSubmitNewCaps}
+                                    style={modal.input}
+                                    maxLength={2}
+                                />
+                            </ImageBackground>
+                        </View>
+                    </View>
+                    <TouchableOpacity onPress={handleSubmitNewCap} style={latestCapToAdd.length === 0 ? [modal.addAnother, modal.addAnotherDisabled] : modal.addAnother} disabled={latestCapToAdd.length === 0}>
+                        <Text style={styles.buttonText}>noch einer!</Text>
+                    </TouchableOpacity>
                 </View>
             </Modal>
 
