@@ -217,10 +217,12 @@ export default function App() {
         return Object.keys(capsCollected).map((cap: number) => {
             return (
                 <View key={'capStack' + cap} style={capsCollection.capsStack}>
-                    {capsCollected[cap].map((cap: number, index: number) =>
-                        <Image key={'capStackImage' + cap + index}
-                               source={require("./assets/capIcon.png")}
-                               style={capsCollection.capIcon}/>)}
+                    <View style={capsCollection.iconStack} key={'capStackIcons' + cap}>
+                        {capsCollected[cap].map((cap: number, index: number) =>
+                            <Image key={'capStackImage' + cap + index}
+                                   source={require("./assets/capIcon.png")}
+                                   style={capsCollection.capIcon}/>)}
+                    </View>
                     <Text style={capsCollection.text}>{cap}</Text>
                 </View>)
         })

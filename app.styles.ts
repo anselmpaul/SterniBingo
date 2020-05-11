@@ -16,7 +16,7 @@ const fontSizes = {
     button: 16,
     sheetNumber: 20,
     text: 16,
-    input: 32,
+    input: 30,
 };
 
 export const styles = StyleSheet.create({
@@ -162,7 +162,9 @@ export const styles = StyleSheet.create({
 export const capsCollection = StyleSheet.create({
     capIcon: {
         width: 30,
-        height: 10
+        height: 10,
+        marginLeft: 1,
+        marginRight: 1
     },
     capsCollection: {
         padding: 10,
@@ -174,6 +176,11 @@ export const capsCollection = StyleSheet.create({
     },
     headline: {
         fontWeight: 'bold'
+    },
+    iconStack: {
+        maxHeight: 30,
+        flexWrap: 'wrap',
+        flexDirection: 'column-reverse'
     },
     capsStacks: {
         flexDirection: 'row',
