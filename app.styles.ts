@@ -1,4 +1,4 @@
-import {StyleSheet} from "react-native";
+import {Dimensions, StyleSheet} from "react-native";
 
 export const colors = {
     background: '#DE0000',
@@ -29,16 +29,27 @@ export const styles = StyleSheet.create({
         alignItems: 'center'
     },
     contentContainer: {
-        flexDirection: 'column'
+        flexDirection: 'column',
+        width: '100%'
+    },
+    test: {
+        width: 200,
+        textAlign: 'center',
+        backgroundColor: colors.white
     },
     flatList: {
-        backgroundColor: colors.black
+        backgroundColor: colors.button,
+        width: '100%'
     },
-    flatListContainer: {
-        alignItems: 'center'
+    flatListContentContainer: {
+        flex: 0,
+        alignItems: 'center',
+        paddingLeft: Dimensions.get('screen').width * 0.025,
+        paddingRight: Dimensions.get('screen').width * 0.05
     },
     flatListContainerTest: {
-        height: '60%'
+        height: Dimensions.get('screen').width,
+        width: '100%'
     },
     sheet: {
         display: 'flex',
@@ -55,7 +66,7 @@ export const styles = StyleSheet.create({
         backgroundColor: colors.white,
         borderRadius: 8,
         padding: 10,
-        margin: 10,
+        marginLeft: Dimensions.get('screen').width * 0.025,
         shadowColor: colors.black,
         shadowOffset: {
             width: 0,
@@ -64,7 +75,7 @@ export const styles = StyleSheet.create({
         shadowOpacity: 0.34,
         shadowRadius: 6.27,
         elevation: 10,
-        width: '80%',
+        width: Dimensions.get('screen').width * 0.9,
         aspectRatio: 1
     },
     sheetNumber: {

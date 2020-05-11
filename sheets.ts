@@ -128,7 +128,29 @@ export const createTheBingoThing = (sheets: Array<Sheet>) => {
         addNeighbors(bingoBottomLeftTopRight, id);
 
     });
-    console.log(theThing);
+    console.log('created the intial', theThing);
+    return theThing;
+};
+
+export const updateBingoThing = (capsToRemove: Array<number>, theThing: Thing) => {
+    capsToRemove.map(cap => {
+        const entry = theThing[cap];
+        if (entry) {
+            entry.map(bingo => {
+                bingo.missingNeighbors.map(x =>
+                    theThing[x].map(y => {
+                            const i = y.missingNeighbors.findIndex(z => z === cap);
+                            if (i !== -1) {
+                                y.missingNeighbors.splice(i, 1);
+                            }
+                        }
+                    ));
+            });
+        }
+
+        delete theThing[cap];
+    });
+
     return theThing;
 };
 
