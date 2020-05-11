@@ -97,11 +97,11 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: colors.button,
-        height: sizes.buttonHeight
+        height: sizes.buttonHeight,
     },
     buttonText: {
         color: colors.white,
-        fontWeight: '500',
+        fontWeight: 'bold',
         fontSize: 16
     },
     headline: {
