@@ -3,3 +3,5 @@
 package-lock.json
 yarn.lock
 /.idea/
+**/.DS_store
+.DS_store

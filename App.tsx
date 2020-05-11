@@ -16,17 +16,6 @@ import {capsCollection, colors, styles} from "./app.styles";
 import {bingoCheck, createTheBingoThing, Result, sheets, updateBingoThing} from './sheets';
 import {getDataFromStore, saveDataToStore} from "./AsyncStore";
 
-/* TODOs
-styling
-ANIMATIONS
-corner cases: double bingo one cap
-
-firstRun experience
-
-reset theThing when getting or removing card,
-then quietly check for bingos again (when adding new card)
- */
-
 type Bingo = {
     id: number,
     combo: Array<number>,
@@ -38,6 +27,7 @@ export default function App() {
     const [capsToAdd, setCapsToAdd] = useState<undefined | string>(undefined);
     const [mySheets, setMySheets] = useState<Array<number>>([]);
     const flatListRef = useRef(null);
+    const capsInputRef = useRef(null);
     const [myCaps, setMyCaps] = useState<Array<number>>([]);
     const [theBingoThing, setTheBingoThing] = useState({});
     const [myBingos, setMyBingos] = useState<Array<Bingo>>([]);
@@ -75,8 +65,11 @@ export default function App() {
         return Boolean(myCaps.find(cap => cap === value));
     };
 
-    const handleButton = () => {
+    const handleEnterCapsButton = () => {
         setAddCapModalVisible(!addCapModalVisible);
+        if (capsInputRef && capsInputRef.current) {
+            capsInputRef.current.focus();
+        }
     };
 
     const resetData = () => {
@@ -89,7 +82,6 @@ export default function App() {
         setTheBingoThing(createTheBingoThing([]));
         ToastAndroid.show('RESET', ToastAndroid.SHORT);
     };
-
 
     // this emulates the native splice(), but returns a new array
     const removeFromArray = (element: any, array: Array<any>) => {
@@ -244,6 +236,7 @@ export default function App() {
                         multiline
                         keyboardType={'numeric'}
                         autoFocus={true}
+                        ref={capsInputRef}
                         placeholder="Gebe eine oder mehrere Zahlen ein, getrennt durch ein Komma, Punkt oder Leerzeichen"
                         value={capsToAdd}
                         onChangeText={text => setCapsToAdd(text)}
@@ -277,9 +270,9 @@ export default function App() {
                 </View>
                 <TouchableOpacity
                     style={styles.addCapsButton}
-                    onPress={handleButton}
+                    onPress={handleEnterCapsButton}
                 >
-                    <Text style={styles.buttonText}>Saufen!</Text>
+                    <Text style={styles.buttonText}>PROST!</Text>
                 </TouchableOpacity>
             </View>
         </View>
