@@ -1,18 +1,22 @@
 import React, {useEffect, useRef, useState} from 'react';
+import Collapsible from 'react-native-collapsible';
 import {
     Button,
-    FlatList,
+    Image,
     Modal,
     NativeSyntheticEvent,
+    ScrollView,
     Text,
     TextInput,
     TextInputSubmitEditingEventData,
+    ToastAndroid,
     TouchableOpacity,
-    View,
-    Image,
-    ToastAndroid, TouchableWithoutFeedback
+    TouchableWithoutFeedback,
+    View
 } from 'react-native';
 import {capsCollection, colors, styles} from "./app.styles";
+// @ts-ignore
+import Icon from 'react-native-vector-icons/FontAwesome';
 import {bingoCheck, createTheBingoThing, Result, sheets, updateBingoThing} from './sheets';
 import {getDataFromStore, saveDataToStore} from "./AsyncStore";
 
@@ -31,6 +35,7 @@ export default function App() {
     const [myCaps, setMyCaps] = useState<Array<number>>([]);
     const [theBingoThing, setTheBingoThing] = useState({});
     const [myBingos, setMyBingos] = useState<Array<Bingo>>([]);
+    const [isMyCapsVisible, setMyCapsVisible] = useState(true);
 
     useEffect(() => {
         const capsPromise = getDataFromStore('myCaps');
@@ -183,7 +188,7 @@ export default function App() {
     const isActive = (id: number) => mySheets.includes(id);
 
     const renderSheet = (item: any) => {
-        const sheet = item.item;
+        const sheet = item;
         const bingosForThisSheet = myBingos.filter(b => b.id === sheet.id);
         return (
             <View style={[styles.sheetWrapper]} key={'sheet' + sheet.id + 'wrapper'}>
@@ -260,24 +265,35 @@ export default function App() {
                         <Image style={styles.headlineIcon} source={require('./assets/icon.png')}/>
                     </View>
                 </TouchableWithoutFeedback>
-                <View style={styles.contentContainer}>
-                    <View style={styles.flatListContainerTest}>
-                        <FlatList
-                            ref={flatListRef}
-                            horizontal
-                            style={styles.flatList}
-                            contentContainerStyle={styles.flatListContentContainer}
-                            data={sheets.sort((a, b) => (isActive(a.id) === isActive(b.id)) ? 0 : isActive(a.id) ? -1 : 1)}
-                            renderItem={renderSheet}
-                            keyExtractor={(item) => 'list-item-' + item.id}/>
-                    </View>
-                    <View style={capsCollection.capsCollection}>
-                        <Text style={[capsCollection.text, capsCollection.headline]}>Kronkorkensammlung</Text>
-                        <View style={capsCollection.capsStacks}>
-                            {renderMyCaps()}
+                <ScrollView style={styles.contentScrollContainer}>
+                    <View style={styles.contentContainer}>
+                        <View style={styles.flatListContainerTest}>
+                            <ScrollView
+                                ref={flatListRef}
+                                horizontal
+                                nestedScrollEnabled
+                                style={styles.flatList}
+                                contentContainerStyle={styles.flatListContentContainer}
+                                //data={sheets.sort((a, b) => (isActive(a.id) === isActive(b.id)) ? 0 : isActive(a.id) ? -1 : 1)}
+                                //renderItem={renderSheet}
+                                //keyExtractor={(item) => 'list-item-' + item.id}
+                            >
+                                {sheets.sort((a, b) => (isActive(a.id) === isActive(b.id)) ? 0 : isActive(a.id) ? -1 : 1).map(sheet => renderSheet(sheet))}
+                            </ScrollView>
+                        </View>
+                        <View style={capsCollection.capsCollection}>
+                            <TouchableOpacity onPress={() => setMyCapsVisible(!isMyCapsVisible)} style={capsCollection.headerWrapper}>
+                                <Icon name={isMyCapsVisible ? "chevron-up" : "chevron-down"} color="white" />
+                                <Text style={[capsCollection.text, capsCollection.headline]}>Kronkorkensammlung</Text>
+                            </TouchableOpacity>
+                            <Collapsible collapsed={!isMyCapsVisible}>
+                                <View style={capsCollection.capsStacks}>
+                                    {renderMyCaps()}
+                                </View>
+                            </Collapsible>
                         </View>
                     </View>
-                </View>
+                </ScrollView>
                 <TouchableOpacity
                     style={styles.addCapsButton}
                     onPress={handleEnterCapsButton}

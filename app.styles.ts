@@ -40,6 +40,12 @@ export const styles = StyleSheet.create({
         flexDirection: 'column',
         width: '100%'
     },
+    contentScrollContainer: {
+        marginTop: 40,
+        marginBottom: 10,
+        height: '80%',
+        width: '100%',
+    },
     flatList: {
         backgroundColor: colors.button,
         width: '100%'
@@ -174,8 +180,18 @@ export const capsCollection = StyleSheet.create({
         color: colors.white,
         fontSize: fontSizes.text
     },
+    headerWrapper: {
+        borderBottomWidth: 1,
+        borderColor: colors.button,
+        width: '90%',
+        alignItems: 'center',
+        paddingBottom: 3,
+        flexDirection: 'row',
+        justifyContent: 'center'
+    },
     headline: {
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        marginLeft: 5
     },
     iconStack: {
         maxHeight: 30,
@@ -186,6 +202,7 @@ export const capsCollection = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         alignItems: 'flex-end',
+        paddingTop: 3
     },
     capsStack: {
         padding: 3,
