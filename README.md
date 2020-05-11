@@ -18,4 +18,6 @@ This software is licensed as [Beerware](LICENSE.md).
 * add some sweet ANIMATIONS
 * handle corner cases: double bingo for one cap
 * better readme for when i return to this project in a year
-* improve the  first run experience
+* improve the first run experience
+* improve display of "meine kronkorken"
+* add some data science
