@@ -68,6 +68,7 @@ export default function App() {
     const handleEnterCapsButton = () => {
         setAddCapModalVisible(!addCapModalVisible);
         if (capsInputRef && capsInputRef.current) {
+            // @ts-ignore it cannot be null
             capsInputRef.current.focus();
         }
     };
@@ -191,7 +192,8 @@ export default function App() {
                         <View
                             style={isActive(sheet.id) && isChecked(num) ? [styles.sheetNumber, styles.sheetNumberChecked] : styles.sheetNumber}
                             key={'numberView' + sheet.id + num + index}>
-                            <Text key={'number' + sheet.id + num + index}>{num.toString()}</Text>
+                            <Text key={'number' + sheet.id + num + index}
+                                  style={isActive(sheet.id) && isChecked(num) ? [styles.sheetNumberText, styles.sheetNumberTextActive] : styles.sheetNumberText}>{num.toString()}</Text>
                         </View>
                     )}
                 </View>
@@ -199,10 +201,10 @@ export default function App() {
                     <View key={'inactiveSheet' + sheet.id} style={styles.inactiveCard}>
                         {bingosForThisSheet.length === 0 ?
                             <Button color={colors.button}
-                                title="Karte entsperren"
-                                onPress={handleUnlockSheet(sheet.id)}/> :
+                                    title="Karte entsperren"
+                                    onPress={handleUnlockSheet(sheet.id)}/> :
                             bingosForThisSheet.map(b => <Button
-                                    color={colors.button} title="Bingo einlösen!" onPress={handleResolveBingo(b)}/>)
+                                color={colors.button} title="Bingo einlösen!" onPress={handleResolveBingo(b)}/>)
                         }
                     </View> : null}
             </View>);
@@ -211,12 +213,14 @@ export default function App() {
     const renderMyCaps = () => {
         const capsCollected: { [cap: number]: Array<number> } = {};
         myCaps.sort((a, b) => a - b).map(cap => capsCollected[cap] ? capsCollected[cap].push(cap) : capsCollected[cap] = [cap]);
-        return Object.keys(capsCollected).map(cap => {
+        // @ts-ignore no idae
+        return Object.keys(capsCollected).map((cap: number) => {
             return (
                 <View key={'capStack' + cap} style={capsCollection.capsStack}>
-                    {capsCollected[cap].map((cap: number, index: number) => <Image key={'capStackImage' + cap + index}
-                                                                                   source={require("./assets/capIcon.png")}
-                                                                                   style={capsCollection.capIcon}/>)}
+                    {capsCollected[cap].map((cap: number, index: number) =>
+                        <Image key={'capStackImage' + cap + index}
+                               source={require("./assets/capIcon.png")}
+                               style={capsCollection.capIcon}/>)}
                     <Text style={capsCollection.text}>{cap}</Text>
                 </View>)
         })
@@ -248,7 +252,11 @@ export default function App() {
 
             <View style={styles.main}>
                 <TouchableWithoutFeedback onLongPress={resetData}>
-                    <Text style={styles.headline}>SterniBingoooo</Text>
+                    <View style={styles.headlineWrapper}>
+                        <Image style={styles.headlineIcon} source={require('./assets/icon.png')}/>
+                        <Text style={styles.headline}>SterniBingo</Text>
+                        <Image style={styles.headlineIcon} source={require('./assets/icon.png')}/>
+                    </View>
                 </TouchableWithoutFeedback>
                 <View style={styles.contentContainer}>
                     <View style={styles.flatListContainerTest}>
@@ -262,7 +270,7 @@ export default function App() {
                             keyExtractor={(item) => 'list-item-' + item.id}/>
                     </View>
                     <View style={capsCollection.capsCollection}>
-                        <Text style={capsCollection.text}>Meine Kronkorken</Text>
+                        <Text style={[capsCollection.text, capsCollection.headline]}>Kronkorkensammlung</Text>
                         <View style={capsCollection.capsStacks}>
                             {renderMyCaps()}
                         </View>

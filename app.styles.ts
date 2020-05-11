@@ -1,7 +1,7 @@
 import {Dimensions, StyleSheet} from "react-native";
 
 export const colors = {
-    background: '#DE0000',
+    background: '#c01209',
     white: '#fff',
     button: '#800000',
     black: '#000'
@@ -9,6 +9,14 @@ export const colors = {
 
 const sizes = {
     buttonHeight: 70
+};
+
+const fontSizes = {
+    headline: 40,
+    button: 16,
+    sheetNumber: 20,
+    text: 16,
+    input: 32,
 };
 
 export const styles = StyleSheet.create({
@@ -31,11 +39,6 @@ export const styles = StyleSheet.create({
     contentContainer: {
         flexDirection: 'column',
         width: '100%'
-    },
-    test: {
-        width: 200,
-        textAlign: 'center',
-        backgroundColor: colors.white
     },
     flatList: {
         backgroundColor: colors.button,
@@ -88,7 +91,14 @@ export const styles = StyleSheet.create({
         alignItems: 'center'
     },
     sheetNumberChecked: {
-        backgroundColor: '#DE0000'
+        backgroundColor: colors.background,
+    },
+    sheetNumberText: {
+        fontSize: fontSizes.sheetNumber,
+        fontWeight: '400'
+    },
+    sheetNumberTextActive: {
+        color: colors.white
     },
     addCapsButton: {
         display: 'flex',
@@ -102,13 +112,23 @@ export const styles = StyleSheet.create({
     buttonText: {
         color: colors.white,
         fontWeight: 'bold',
-        fontSize: 16
+        fontSize: fontSizes.button
+    },
+    headlineWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    headlineIcon: {
+        width: 70,
+        height: 70
     },
     headline: {
         textAlign: 'center',
         color: colors.white,
-        fontSize: 30,
-        marginBottom: 10
+        fontSize: fontSizes.headline,
+        fontWeight: '400'
+
     },
     modal: {
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -118,7 +138,7 @@ export const styles = StyleSheet.create({
         padding: 10
     },
     modalInput: {
-        fontSize: 30,
+        fontSize: fontSizes.input,
         height: 100,
         textAlign: 'center',
         color: colors.white
@@ -145,10 +165,15 @@ export const capsCollection = StyleSheet.create({
         height: 10
     },
     capsCollection: {
-        padding: 10
+        padding: 10,
+        alignItems: 'center'
     },
     text: {
-        color: colors.white
+        color: colors.white,
+        fontSize: fontSizes.text
+    },
+    headline: {
+        fontWeight: 'bold'
     },
     capsStacks: {
         flexDirection: 'row',
