@@ -219,7 +219,8 @@ export const modal = StyleSheet.create({
         fontSize: fontSizes.input,
         height: 100,
         textAlign: 'center',
-        color: colors.white
+        color: colors.white,
+        width: 100
     },
     modal: {
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -229,7 +230,8 @@ export const modal = StyleSheet.create({
         alignItems: 'center'
     },
     latestCapContentContainer: {
-       height: 200
+       height: 200,
+        alignItems: 'center'
     },
     capsToAdd: {
        marginTop: 10,
