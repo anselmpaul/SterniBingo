@@ -38,6 +38,7 @@ export default function App() {
     const [theBingoThing, setTheBingoThing] = useState({});
     const [myBingos, setMyBingos] = useState<Array<Bingo>>([]);
     const [isMyCapsVisible, setMyCapsVisible] = useState(true);
+    const iOS = Platform.OS === "ios";
 
     useEffect(() => {
         const capsPromise = getDataFromStore('myCaps');
@@ -218,7 +219,7 @@ export default function App() {
                 {!isActive(sheet.id) || bingosForThisSheet.length > 0 ?
                     <View key={'inactiveSheet' + sheet.id} style={styles.inactiveCard}>
                         {bingosForThisSheet.length === 0 ?
-                            <Button color={colors.button}
+                            <Button color={iOS ? colors.white : colors.button}
                                     title="Karte entsperren"
                                     onPress={handleUnlockSheet(sheet.id)}/> :
                             bingosForThisSheet.map(b => <Button
@@ -256,7 +257,7 @@ export default function App() {
                 onRequestClose={() => setAddCapModalVisible(!addCapModalVisible)}
             >
                 <View style={modal.modal}>
-                    <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"}>
+                    <KeyboardAvoidingView behavior={iOS ? "padding" : "height"}>
                         <View style={modal.capsToAdd}>
                             {capsToAdd.map(cap =>
                                 <ImageBackground source={require('./assets/capInside.png')} style={modal.backgroundImageSmall}>
