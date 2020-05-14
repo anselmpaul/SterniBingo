@@ -120,6 +120,9 @@ export const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: fontSizes.button
     },
+    buttonTextDisabled: {
+        color: 'grey'
+    },
     headlineWrapper: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -244,15 +247,19 @@ export const modal = StyleSheet.create({
         justifyContent: 'center'
     },
     addAnother: {
-       backgroundColor: colors.red,
+       // backgroundColor: colors.red,
         display: 'flex',
+        width: '50%',
         alignSelf: 'stretch',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
         height: sizes.buttonHeight,
     },
-    addAnotherDisabled: {
-       backgroundColor: colors.button
+    buttons: {
+       flexDirection: 'row'
+    },
+    submit: {
+       // backgroundColor: 'green'
     }
 });

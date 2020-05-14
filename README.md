@@ -5,7 +5,7 @@
 A stupid app for the stupid Sternburg Bingo.
 
 I made this because I'm too lazy to manually search each number on the bingo sheets and because it was fun to overengineer this.
-I want to thank my friends and roommates for bringing in their great ideas and supporting throughout this journey.
+I want to thank my friends and roommates for bringing in their great ideas and supporting me throughout this journey.
 
 
 Cheers 🍻!

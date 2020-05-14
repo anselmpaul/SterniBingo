@@ -4,7 +4,9 @@ import {
     Button,
     Image,
     ImageBackground,
+    KeyboardAvoidingView,
     Modal,
+    Platform,
     ScrollView,
     Text,
     TextInput,
@@ -114,8 +116,10 @@ export default function App() {
     };
 
     const handleSubmitNewCaps = () => {
-        if (capsToAdd.length > 0) {
-            const allCaps = [...myCaps, ...capsToAdd];
+        const matchCapToAdd = latestCapToAdd.match(/\d+/g);
+        if (capsToAdd.length > 0 || matchCapToAdd && matchCapToAdd.length > 0) {
+            // @ts-ignore matchCappToAdd is not null
+            const allCaps = [...myCaps, ...capsToAdd, ...matchCapToAdd.map(e => parseInt(e))];
             setMyCaps(allCaps);
             saveDataToStore('myCaps', allCaps);
             capsToAdd.map(cap => {
@@ -252,33 +256,40 @@ export default function App() {
                 onRequestClose={() => setAddCapModalVisible(!addCapModalVisible)}
             >
                 <View style={modal.modal}>
-                    <View style={modal.capsToAdd}>
-                        {capsToAdd.map(cap =>
-                            <ImageBackground source={require('./assets/capInside.png')} style={modal.backgroundImageSmall}>
-                                <Text style={modal.capsToAddText}>{cap}</Text>
-                            </ImageBackground>)}
-                    </View>
-                    <View style={modal.latestCapArea}>
-                        <View style={modal.latestCapContentContainer}>
-                            <ImageBackground source={require('./assets/capInside.png')} style={modal.backgroundImage}>
-                                <TextInput
-                                    multiline
-                                    keyboardType={'numeric'}
-                                    autoFocus={true}
-                                    ref={capsInputRef}
-                                    placeholder="0"
-                                    value={latestCapToAdd}
-                                    onChangeText={text => setLatestCapToAdd(text)}
-                                    onSubmitEditing={handleSubmitNewCaps}
-                                    style={modal.input}
-                                    maxLength={2}
-                                />
-                            </ImageBackground>
+                    <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"}>
+                        <View style={modal.capsToAdd}>
+                            {capsToAdd.map(cap =>
+                                <ImageBackground source={require('./assets/capInside.png')} style={modal.backgroundImageSmall}>
+                                    <Text style={modal.capsToAddText}>{cap}</Text>
+                                </ImageBackground>)}
                         </View>
-                    </View>
-                    <TouchableOpacity onPress={handleSubmitNewCap} style={latestCapToAdd.length === 0 ? [modal.addAnother, modal.addAnotherDisabled] : modal.addAnother} disabled={latestCapToAdd.length === 0}>
-                        <Text style={styles.buttonText}>noch einer!</Text>
-                    </TouchableOpacity>
+                        <View style={modal.latestCapArea}>
+                            <View style={modal.latestCapContentContainer}>
+                                <ImageBackground source={require('./assets/capInside.png')} style={modal.backgroundImage}>
+                                    <TextInput
+                                        multiline
+                                        keyboardType={'numeric'}
+                                        autoFocus={true}
+                                        ref={capsInputRef}
+                                        placeholder="0"
+                                        value={latestCapToAdd}
+                                        onChangeText={text => setLatestCapToAdd(text)}
+                                        onSubmitEditing={handleSubmitNewCaps}
+                                        style={modal.input}
+                                        maxLength={2}
+                                    />
+                                </ImageBackground>
+                            </View>
+                        </View>
+                        <View style={modal.buttons}>
+                            <TouchableOpacity onPress={handleSubmitNewCap} style={modal.addAnother} disabled={latestCapToAdd.length === 0}>
+                                <Text style={latestCapToAdd.length === 0 ? [styles.buttonText, styles.buttonTextDisabled] : styles.buttonText}>noch einer!</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[modal.addAnother, modal.submit]}>
+                                <Text style={styles.buttonText} onPress={handleSubmitNewCaps}>fertig.</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </KeyboardAvoidingView>
                 </View>
             </Modal>
 
